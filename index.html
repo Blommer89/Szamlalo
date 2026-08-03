@@ -82,11 +82,10 @@
     <div id="main-view" class="view-section active">
         <h1>Napi Edzés Napló</h1>
         
-        <!-- Napi gyakorlat kiválasztó / kezelő panel -->
+        <!-- Napi gyakorlat kiválasztó panel -->
         <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
             <h3 style="margin-top:0; font-size:1rem; color:#1e40af;">Ma végzett gyakorlatok kiválasztása</h3>
             <div id="picker-container" style="display:flex; flex-direction:column; gap:6px; font-size:0.9rem;"></div>
-            <button onclick="mentiValasztast()" style="width:100%; background:#2563eb; color:white; border:none; padding:8px; border-radius:6px; font-weight:600; margin-top:10px; cursor:pointer;">Kiválasztás mentése</button>
         </div>
 
         <div id="cards-container"></div>
@@ -121,20 +120,21 @@
         return m > 0 ? `${m}p ${s}mp` : `${s}mp`;
     }
 
-    // Alapbeállítások generálása
+    // Alapbeállítások generálása és eseménykezelő kötése az azonnali mentéshez/frissítéshez
     function initPicker() {
         let today = getTodayString();
-        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '["fekvo","guggolas"]');
+        // Alapértelmezésben üres tömb (semmi sincs kijelölve)
+        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '[]');
         
         let html = '';
         gyakorlatokDef.forEach(g => {
             let checked = activeList.includes(g.id) ? 'checked' : '';
-            html += `<label><input type="checkbox" value="${g.id}" ${checked}> ${g.name}</label>`;
+            html += `<label><input type="checkbox" value="${g.id}" ${checked} onchange="valasztasValtozott()"> ${g.name}</label>`;
         });
         document.getElementById('picker-container').innerHTML = html;
     }
 
-    function mentiValasztast() {
+    function valasztasValtozott() {
         let today = getTodayString();
         let checkboxes = document.querySelectorAll('#picker-container input[type="checkbox"]');
         let selected = [];
@@ -147,9 +147,15 @@
 
     function renderApp() {
         let today = getTodayString();
-        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '["fekvo","guggolas"]');
+        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '[]');
         let container = document.getElementById('cards-container');
         let html = '';
+
+        if (activeList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.9rem; margin-top:20px;">Jelölj ki a fenti listából legalább egy gyakorlatot a kezdéshez!</div>';
+            initPicker();
+            return;
+        }
 
         activeList.forEach(id => {
             let g = gyakorlatokDef.find(x => x.id === id);
@@ -167,7 +173,7 @@
                         <div class="setup-box">
                             <div>Add meg a mai napi célt!</div>
                             <input type="number" id="setup_cel_${id}" value="${g.type === 'sec' ? 60 : 100}" style="width:70px; padding:4px; text-align:center; font-size:1rem; margin-top:6px;"> ${g.type === 'sec' ? 'mp' : 'db'}
-                            <br><button onclick="mentiCelt('${id}', '${g.type}')">Cél rögzítése és kezdés</button>
+                            <br><button onclick="mentiCelt('${id}')">Cél rögzítése és kezdés</button>
                         </div>
                     </div>
                 `;
