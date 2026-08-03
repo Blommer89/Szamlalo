@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Napi Edzés Napló</title>
+    <!-- Mobil alkalmazás (PWA) beállítások -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <style>
         body {
             font-family: system-ui, sans-serif;
@@ -153,7 +156,7 @@
             if (!g) return;
 
             let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
-            let cel = localStorage.getItem('cel_' + id);
+            let cel = localStorage.getItem(`cel_${id}_${today}`) || localStorage.getItem('cel_' + id);
             let maiErtek = history[today] || 0;
 
             // Ha nincs még napi cél megadva erre a napra
@@ -162,7 +165,7 @@
                     <div class="card ${g.color}">
                         <h2 class="card-title">${g.name}</h2>
                         <div class="setup-box">
-                            <div>Előbb add meg a mai napi célt!</div>
+                            <div>Add meg a mai napi célt!</div>
                             <input type="number" id="setup_cel_${id}" value="${g.type === 'sec' ? 60 : 100}" style="width:70px; padding:4px; text-align:center; font-size:1rem; margin-top:6px;"> ${g.type === 'sec' ? 'mp' : 'db'}
                             <br><button onclick="mentiCelt('${id}', '${g.type}')">Cél rögzítése és kezdés</button>
                         </div>
@@ -231,21 +234,19 @@
         initPicker();
     }
 
-    function mentiCelt(id, type) {
+    function mentiCelt(id) {
         let input = document.getElementById('setup_cel_' + id);
         let val = parseInt(input.value, 10);
         if (isNaN(val) || val <= 0) return;
         
         let today = getTodayString();
-        localStorage.setItem(`cel_${id}_${today}`, val); // napi szintű cél tárolás
-        localStorage.setItem('cel_' + id, val); // alapértelmezett
+        localStorage.setItem(`cel_${id}_${today}`, val);
         renderApp();
     }
 
     function ujraCelt(id) {
         let today = getTodayString();
         localStorage.removeItem(`cel_${id}_${today}`);
-        localStorage.removeItem('cel_' + id);
         renderApp();
     }
 
