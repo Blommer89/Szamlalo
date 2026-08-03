@@ -1,0 +1,20 @@
+{
+  "name": "Napi Edzés Napló",
+  "short_name": "EdzésNapló",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "ikon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "ikon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
