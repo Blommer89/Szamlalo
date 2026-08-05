@@ -40,7 +40,8 @@
         .btn-plus:active { opacity: 0.85; }
 
         .custom-add-box { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
-        .custom-add-box input { width: 65px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; text-align: center; }
+        .custom-add-box input { width: 55px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; text-align: center; }
+        .custom-add-box select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; background: #f8fafc; }
         .custom-add-box button { padding: 6px 12px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
 
         .setup-box { background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem; text-align: center; }
@@ -222,11 +223,18 @@
         renderApp();
     }
 
-    function egyediHozzaad(id) {
+    function egyediHozzaad(id, type) {
         let input = document.getElementById('custom_' + id);
         let val = parseInt(input.value);
         if (!isNaN(val) && val > 0) {
-            hozzaad(id, val);
+            let mennyiseg = val;
+            if (type === 'sec') {
+                let unit = document.getElementById('unit_' + id).value;
+                if (unit === 'perc') {
+                    mennyiseg = val * 60;
+                }
+            }
+            hozzaad(id, mennyiseg);
             input.value = '';
         }
     }
@@ -324,17 +332,34 @@
                 }
 
                 let gombokHtml = '';
+                let egyediBoxHtml = '';
                 if (g.type === 'sec') {
                     gombokHtml = `
                         <button class="btn-plus" onclick="hozzaad('${id}', 30)">+30mp</button>
                         <button class="btn-plus" onclick="hozzaad('${id}', 60)">+1p</button>
                         <button class="btn-plus" onclick="hozzaad('${id}', 300)">+5p</button>
                     `;
+                    egyediBoxHtml = `
+                        <div class="custom-add-box">
+                            <input type="number" id="custom_${id}" placeholder="Egyedi">
+                            <select id="unit_${id}">
+                                <option value="mp">mp</option>
+                                <option value="perc">perc</option>
+                            </select>
+                            <button onclick="egyediHozzaad('${id}', 'sec')">Hozzáad</button>
+                        </div>
+                    `;
                 } else {
                     gombokHtml = `
                         <button class="btn-plus" onclick="hozzaad('${id}', 10)">+10</button>
                         <button class="btn-plus" onclick="hozzaad('${id}', 20)">+20</button>
                         <button class="btn-plus" onclick="hozzaad('${id}', 50)">+50</button>
+                    `;
+                    egyediBoxHtml = `
+                        <div class="custom-add-box">
+                            <input type="number" id="custom_${id}" placeholder="Egyedi" style="width:100%;">
+                            <button onclick="egyediHozzaad('${id}', 'db')">Hozzáad</button>
+                        </div>
                     `;
                 }
 
@@ -357,10 +382,7 @@
                             ${gombokHtml}
                         </div>
 
-                        <div class="custom-add-box">
-                            <input type="number" id="custom_${id}" placeholder="Egyedi">
-                            <button onclick="egyediHozzaad('${id}')">Hozzáad</button>
-                        </div>
+                        ${egyediBoxHtml}
 
                         <button class="history-btn" onclick="toggleReszletek('${id}')">📋 Elmúlt napok</button>
                         <div id="history_box_${id}" class="history-box">
