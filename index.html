@@ -107,15 +107,15 @@
 <script>
     const gyakorlatokDef = [
         { id: 'fekvo', name: 'Fekvőtámasz', color: 'blue', type: 'db' },
-        { id: 'guggolas', name: 'Guggolás', color: 'green', type: 'db' },
-        { id: 'labemeles', name: 'Lábemelés', color: 'red', type: 'db' },
         { id: 'felules', name: 'Felülés', color: 'purple', type: 'db' },
-        { id: 'haspres', name: 'Hasprés', color: 'orange', type: 'db' },
-        { id: 'plank', name: 'Plank', color: 'teal', type: 'sec' },
-        { id: 'ugralokotel', name: 'Ugrálókötél', color: 'pink', type: 'sec' },
         { id: 'futas', name: 'Futás', color: 'indigo', type: 'sec' },
+        { id: 'guggolas', name: 'Guggolás', color: 'green', type: 'db' },
+        { id: 'haspres', name: 'Hasprés', color: 'orange', type: 'db' },
+        { id: 'hulahopp', name: 'Hulahopp karika', color: 'cyan', type: 'sec' },
         { id: 'kerekpar', name: 'Kerékpározás', color: 'amber', type: 'sec' },
-        { id: 'hulahopp', name: 'Hulahopp karika', color: 'cyan', type: 'sec' }
+        { id: 'labemeles', name: 'Lábemelés', color: 'red', type: 'db' },
+        { id: 'plank', name: 'Plank', color: 'teal', type: 'sec' },
+        { id: 'ugralokotel', name: 'Ugrálókötél', color: 'pink', type: 'sec' }
     ];
 
     function getTodayString() {
@@ -287,7 +287,6 @@
         let val = parseInt(input.value, 10);
         if (isNaN(val) || val <= 0) return;
 
-        // Ha percet választott, átváltjuk másodpercre
         let secToAdd = unit === 'min' ? val * 60 : val;
         novel(id, secToAdd);
     }
