@@ -111,11 +111,12 @@
 <body>
 
 <!-- GRATULÁLÓ POPUP A KACSINTÓS KUTYÁVAL -->
-<div id="congrats-popup">
-    <div class="popup-content">
+<div id="congrats-popup" onclick="bezárPopup()">
+    <div class="popup-content" onclick="event.stopPropagation()">
         <img src="ikon_kacsinto.png" alt="Gratulálok!" onerror="this.src='ikon.png'">
         <h2>Szép volt!</h2>
         <p>Teljesítetted a mai napi célt! 💪🐶</p>
+        <button onclick="bezárPopup()" style="margin-top:15px; padding:8px 16px; background:#16a34a; color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Köszönöm!</button>
     </div>
 </div>
 
@@ -162,7 +163,7 @@
     function formatTime(sec) {
         let m = Math.floor(sec / 60);
         let s = sec % 60;
-        return m > 0 ? `${m}p${s}mp` : `${s}mp`;
+        return m > 0 ? `${m}p ${s}mp` : `${s}mp`;
     }
 
     function initPicker() {
@@ -191,6 +192,88 @@
         });
         localStorage.setItem('active_ex_' + today, JSON.stringify(selected));
         renderApp();
+    }
+
+    function mentiCelt(id) {
+        let today = getTodayString();
+        let inputVal = document.getElementById('setup_cel_' + id).value;
+        let celSzam = parseInt(inputVal);
+        if (celSzam > 0) {
+            localStorage.setItem(`cel_${id}_${today}`, celSzam);
+            renderApp();
+        }
+    }
+
+    function hozzaad(id, mennyiseg) {
+        let today = getTodayString();
+        let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
+        let regiErtek = history[today] || 0;
+        let ujErtek = regiErtek + mennyiseg;
+        
+        let cel = parseInt(localStorage.getItem(`cel_${id}_${today}`) || localStorage.getItem('cel_' + id) || 100);
+        
+        history[today] = ujErtek;
+        localStorage.setItem('history_' + id, JSON.stringify(history));
+
+        if (regiErtek < cel && ujErtek >= cel) {
+            mutatPopup();
+        }
+
+        renderApp();
+    }
+
+    function egyediHozzaad(id) {
+        let input = document.getElementById('custom_' + id);
+        let val = parseInt(input.value);
+        if (!isNaN(val) && val > 0) {
+            hozzaad(id, val);
+            input.value = '';
+        }
+    }
+
+    function mutatPopup() {
+        document.getElementById('congrats-popup').style.display = 'flex';
+    }
+
+    function bezárPopup() {
+        document.getElementById('congrats-popup').style.display = 'none';
+    }
+
+    function valtView(viewName) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        if (viewName === 'main') {
+            document.getElementById('main-view').classList.add('active');
+            initPicker();
+        } else if (viewName === 'history') {
+            document.getElementById('history-view').classList.add('active');
+        }
+    }
+
+    function nyitTeljesElozmeny(id) {
+        let g = gyakorlatokDef.find(x => x.id === id);
+        if (!g) return;
+        
+        document.getElementById('full-history-title').innerText = `${g.name} - Összes előzmény`;
+        let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
+        let sortedDates = Object.keys(history).sort().reverse();
+        
+        let html = '';
+        if (sortedDates.length === 0) {
+            html = '<div style="color:#64748b; text-align:center;">Még nincs rögzített adat.</div>';
+        } else {
+            sortedDates.forEach(d => {
+                let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
+                let cel = localStorage.getItem(`cel_${id}_${d}`) || '-';
+                html += `<div class="history-row"><span><b>${d}</b></span><span>${valStr} (Cél: ${g.type === 'sec' ? formatTime(cel) : cel + ' db'})</span></div>`;
+            });
+        }
+        document.getElementById('full-history-list').innerHTML = html;
+        valtView('history');
+    }
+
+    function toggleReszletek(id) {
+        let box = document.getElementById('history_box_' + id);
+        box.classList.toggle('active');
     }
 
     function renderApp() {
@@ -236,4 +319,66 @@
                 } else {
                     last3.forEach(d => {
                         let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
-                        histHtml += `<div class="history-row"><span>${d === today ? 'Ma' : d}</span><span><b>${valStr
+                        histHtml += `<div class="history-row"><span>${d === today ? 'Ma' : d}</span><span><b>${valStr}</b></span></div>`;
+                    });
+                }
+
+                let gombokHtml = '';
+                if (g.type === 'sec') {
+                    gombokHtml = `
+                        <button class="btn-plus" onclick="hozzaad('${id}', 30)">+30mp</button>
+                        <button class="btn-plus" onclick="hozzaad('${id}', 60)">+1p</button>
+                        <button class="btn-plus" onclick="hozzaad('${id}', 300)">+5p</button>
+                    `;
+                } else {
+                    gombokHtml = `
+                        <button class="btn-plus" onclick="hozzaad('${id}', 10)">+10</button>
+                        <button class="btn-plus" onclick="hozzaad('${id}', 20)">+20</button>
+                        <button class="btn-plus" onclick="hozzaad('${id}', 50)">+50</button>
+                    `;
+                }
+
+                let maiKijelzes = g.type === 'sec' ? formatTime(maiErtek) : maiErtek + ' db';
+
+                html += `
+                    <div class="card ${g.color}">
+                        <div class="card-header">
+                            <h2 class="card-title">${g.name}</h2>
+                            <div class="target-box">Cél: <input type="number" value="${cel}" onchange="localStorage.setItem('cel_${id}_' + getTodayString(), this.value); renderApp();"> ${g.type === 'sec' ? 'mp' : 'db'}</div>
+                        </div>
+                        
+                        <div style="background: #e2e8f0; border-radius: 6px; height: 8px; width: 100%; overflow: hidden; margin-bottom: 8px;">
+                            <div style="background: currentColor; width: ${szazalek}%; height: 100%; transition: width 0.3s;"></div>
+                        </div>
+
+                        <div class="val-display">${maiKijelzes}</div>
+                        
+                        <div class="btn-group">
+                            ${gombokHtml}
+                        </div>
+
+                        <div class="custom-add-box">
+                            <input type="number" id="custom_${id}" placeholder="Egyedi">
+                            <button onclick="egyediHozzaad('${id}')">Hozzáad</button>
+                        </div>
+
+                        <button class="history-btn" onclick="toggleReszletek('${id}')">📋 Elmúlt napok</button>
+                        <div id="history_box_${id}" class="history-box">
+                            ${histHtml}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        container.innerHTML = html;
+        initPicker();
+    }
+
+    // Alkalmazás indítása
+    initPicker();
+    renderApp();
+</script>
+
+</body>
+</html>
