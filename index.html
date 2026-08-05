@@ -32,12 +32,16 @@
 
         .val-display { font-size: 2.2rem; font-weight: 800; margin: 10px 0; }
         
-        .btn-group { display: flex; gap: 6px; margin-bottom: 8px; }
+        .btn-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
         .btn-plus {
-            flex: 1; border: none; border-radius: 8px; padding: 12px 6px;
-            font-size: 0.95rem; font-weight: 700; color: white; cursor: pointer;
+            flex: 1; min-width: 70px; border: none; border-radius: 8px; padding: 10px 6px;
+            font-size: 0.9rem; font-weight: 700; color: white; cursor: pointer;
         }
         .btn-plus:active { opacity: 0.85; }
+
+        .custom-add-box { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+        .custom-add-box input { width: 65px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; text-align: center; }
+        .custom-add-box button { padding: 6px 12px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
 
         .setup-box { background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem; text-align: center; }
         .setup-box button { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 6px; }
@@ -53,26 +57,27 @@
         .history-box.active { display: block; }
         .history-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f8fafc; }
 
+        .picker-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+        .picker-row:last-child { border-bottom: none; }
+        .picker-row button { background: #e2e8f0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; color: #334155; }
+        .picker-row button:hover { background: #cbd5e1; }
+
         .view-section { display: none; }
         .view-section.active { display: block; }
         
         .back-btn { background: #475569; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
 
         /* Színek */
-        .card.blue .val-display { color: #2563eb; }
-        .card.blue .btn-plus { background: #2563eb; }
-        .card.green .val-display { color: #16a34a; }
-        .card.green .btn-plus { background: #16a34a; }
-        .card.red .val-display { color: #dc2626; }
-        .card.red .btn-plus { background: #dc2626; }
-        .card.purple .val-display { color: #7c3aed; }
-        .card.purple .btn-plus { background: #7c3aed; }
-        .card.orange .val-display { color: #ea580c; }
-        .card.orange .btn-plus { background: #ea580c; }
-        .card.teal .val-display { color: #0d9488; }
-        .card.teal .btn-plus { background: #0d9488; }
-        .card.pink .val-display { color: #db2777; }
-        .card.pink .btn-plus { background: #db2777; }
+        .card.blue .val-display { color: #2563eb; } .card.blue .btn-plus { background: #2563eb; }
+        .card.green .val-display { color: #16a34a; } .card.green .btn-plus { background: #16a34a; }
+        .card.red .val-display { color: #dc2626; } .card.red .btn-plus { background: #dc2626; }
+        .card.purple .val-display { color: #7c3aed; } .card.purple .btn-plus { background: #7c3aed; }
+        .card.orange .val-display { color: #ea580c; } .card.orange .btn-plus { background: #ea580c; }
+        .card.teal .val-display { color: #0d9488; } .card.teal .btn-plus { background: #0d9488; }
+        .card.pink .val-display { color: #db2777; } .card.pink .btn-plus { background: #db2777; }
+        .card.indigo .val-display { color: #4f46e5; } .card.indigo .btn-plus { background: #4f46e5; }
+        .card.amber .val-display { color: #d97706; } .card.amber .btn-plus { background: #d97706; }
+        .card.cyan .val-display { color: #0891b2; } .card.cyan .btn-plus { background: #0891b2; }
     </style>
 </head>
 <body>
@@ -85,7 +90,7 @@
         <!-- Napi gyakorlat kiválasztó panel -->
         <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
             <h3 style="margin-top:0; font-size:1rem; color:#1e40af;">Ma végzett gyakorlatok kiválasztása</h3>
-            <div id="picker-container" style="display:flex; flex-direction:column; gap:6px; font-size:0.9rem;"></div>
+            <div id="picker-container" style="display:flex; flex-direction:column; gap:4px; font-size:0.9rem;"></div>
         </div>
 
         <div id="cards-container"></div>
@@ -107,7 +112,10 @@
         { id: 'felules', name: 'Felülés', color: 'purple', type: 'db' },
         { id: 'haspres', name: 'Hasprés', color: 'orange', type: 'db' },
         { id: 'plank', name: 'Plank', color: 'teal', type: 'sec' },
-        { id: 'ugralokotel', name: 'Ugrálókötél', color: 'pink', type: 'sec' }
+        { id: 'ugralokotel', name: 'Ugrálókötél', color: 'pink', type: 'sec' },
+        { id: 'futas', name: 'Futás', color: 'indigo', type: 'sec' },
+        { id: 'kerekpar', name: 'Kerékpározás', color: 'amber', type: 'sec' },
+        { id: 'hulahopp', name: 'Hulahopp karika', color: 'cyan', type: 'sec' }
     ];
 
     function getTodayString() {
@@ -120,16 +128,19 @@
         return m > 0 ? `${m}p ${s}mp` : `${s}mp`;
     }
 
-    // Alapbeállítások generálása és eseménykezelő kötése az azonnali mentéshez/frissítéshez
     function initPicker() {
         let today = getTodayString();
-        // Alapértelmezésben üres tömb (semmi sincs kijelölve)
         let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '[]');
         
         let html = '';
         gyakorlatokDef.forEach(g => {
             let checked = activeList.includes(g.id) ? 'checked' : '';
-            html += `<label><input type="checkbox" value="${g.id}" ${checked} onchange="valasztasValtozott()"> ${g.name}</label>`;
+            html += `
+                <div class="picker-row">
+                    <label><input type="checkbox" value="${g.id}" ${checked} onchange="valasztasValtozott()"> ${g.name}</label>
+                    <button onclick="nyitTeljesElozmeny('${g.id}')">📅 Előzmények</button>
+                </div>
+            `;
         });
         document.getElementById('picker-container').innerHTML = html;
     }
@@ -165,14 +176,13 @@
             let cel = localStorage.getItem(`cel_${id}_${today}`) || localStorage.getItem('cel_' + id);
             let maiErtek = history[today] || 0;
 
-            // Ha nincs még napi cél megadva erre a napra
             if (!cel) {
                 html += `
                     <div class="card ${g.color}">
                         <h2 class="card-title">${g.name}</h2>
                         <div class="setup-box">
                             <div>Add meg a mai napi célt!</div>
-                            <input type="number" id="setup_cel_${id}" value="${g.type === 'sec' ? 60 : 100}" style="width:70px; padding:4px; text-align:center; font-size:1rem; margin-top:6px;"> ${g.type === 'sec' ? 'mp' : 'db'}
+                            <input type="number" id="setup_cel_${id}" value="${g.type === 'sec' ? 300 : 100}" style="width:70px; padding:4px; text-align:center; font-size:1rem; margin-top:6px;"> ${g.type === 'sec' ? 'mp' : 'db'}
                             <br><button onclick="mentiCelt('${id}')">Cél rögzítése és kezdés</button>
                         </div>
                     </div>
@@ -180,7 +190,6 @@
             } else {
                 let szazalek = Math.min(Math.round((maiErtek / cel) * 100), 100);
                 
-                // Utolsó 3 nap listázása
                 let sortedDates = Object.keys(history).sort().reverse();
                 let histHtml = '';
                 let last3 = sortedDates.slice(0, 3);
@@ -194,7 +203,6 @@
                     });
                 }
 
-                // Gombok típustól függően
                 let buttonsHtml = '';
                 if (g.type === 'db') {
                     buttonsHtml = `
@@ -209,6 +217,14 @@
                         <div class="btn-group">
                             <button class="btn-plus" onclick="novel('${id}', 30)">+30 mp</button>
                             <button class="btn-plus" onclick="novel('${id}', 60)">+1 perc</button>
+                        </div>
+                        <div class="custom-add-box">
+                            <input type="number" id="custom_${id}" placeholder="Mennyi" min="1">
+                            <select id="unit_${id}" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.85rem;">
+                                <option value="sec">mp</option>
+                                <option value="min">perc</option>
+                            </select>
+                            <button onclick="novelEgyeni('${id}')">+ Hozzáadás</button>
                         </div>
                     `;
                 }
@@ -265,6 +281,17 @@
         renderApp();
     }
 
+    function novelEgyeni(id) {
+        let input = document.getElementById('custom_' + id);
+        let unit = document.getElementById('unit_' + id).value;
+        let val = parseInt(input.value, 10);
+        if (isNaN(val) || val <= 0) return;
+
+        // Ha percet választott, átváltjuk másodpercre
+        let secToAdd = unit === 'min' ? val * 60 : val;
+        novel(id, secToAdd);
+    }
+
     function toggleNaptar(id) {
         const box = document.getElementById('hist_box_' + id);
         box.classList.toggle('active');
@@ -278,10 +305,14 @@
         document.getElementById('full-history-title').textContent = `${g.name} - Összes előzmény`;
         
         let html = '';
-        sortedDates.forEach(d => {
-            let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
-            html += `<div class="history-row" style="padding: 8px 0; font-size: 1rem;"><span>${d}</span><span><b>${valStr}</b></span></div>`;
-        });
+        if (sortedDates.length === 0) {
+            html = '<div style="color:#64748b; text-align:center; padding:10px;">Még nincs rögzített előzmény.</div>';
+        } else {
+            sortedDates.forEach(d => {
+                let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
+                html += `<div class="history-row" style="padding: 8px 0; font-size: 1rem;"><span>${d}</span><span><b>${valStr}</b></span></div>`;
+            });
+        }
         
         document.getElementById('full-history-list').innerHTML = html;
         valtView('history');
