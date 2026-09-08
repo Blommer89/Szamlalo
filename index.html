@@ -2,219 +2,1190 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
     <title>Napi Edzés Napló</title>
-    <!-- Mobil alkalmazás (PWA) beállítások -->
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Egyszerű napi edzés- és ismétlésszámláló">
+
     <style>
+        :root {
+            color-scheme: light;
+
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --soft: #f1f5f9;
+            --soft-blue: #eff6ff;
+            --soft-blue-border: #bfdbfe;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+
+                --bg: #0f172a;
+                --card: #1e293b;
+                --text: #f1f5f9;
+                --muted: #94a3b8;
+                --border: #334155;
+                --soft: #273449;
+                --soft-blue: #172554;
+                --soft-blue-border: #1d4ed8;
+                --shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 16px;
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
+            min-height: 100vh;
         }
-        .container { width: 100%; max-width: 480px; position: relative; }
-        h1 { font-size: 1.4rem; text-align: center; margin-bottom: 20px; }
-        
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.45rem;
+            text-align: center;
+            margin: 4px 0 20px;
+        }
+
+        h2,
+        h3 {
+            line-height: 1.25;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .top-actions button {
+            flex: 1;
+        }
+
+        .small-btn {
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            padding: 9px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         .card {
-            background: white; border: 1px solid #e2e8f0; border-radius: 14px;
-            padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
         }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .card-title { font-size: 1.1rem; font-weight: 700; margin: 0; }
-        
-        .target-box { font-size: 0.85rem; color: #64748b; }
-        .target-box input { width: 55px; padding: 2px 4px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
 
-        .val-display { font-size: 2.2rem; font-weight: 800; margin: 10px 0; }
-        
-        .btn-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .target-box {
+            font-size: 0.82rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .target-box input {
+            width: 68px;
+            padding: 5px 4px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .val-display {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin: 10px 0 12px;
+        }
+
+        .progress-wrapper {
+            background: var(--soft);
+            border-radius: 999px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 7px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.78rem;
+            color: var(--muted);
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 7px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
         .btn-plus {
-            flex: 1; min-width: 70px; border: none; border-radius: 8px; padding: 10px 6px;
-            font-size: 0.9rem; font-weight: 700; color: white; cursor: pointer;
+            flex: 1;
+            min-width: 72px;
+            min-height: 44px;
+            border: none;
+            border-radius: 9px;
+            padding: 10px 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.05s, opacity 0.15s;
         }
-        .btn-plus:active { opacity: 0.85; }
 
-        .custom-add-box { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
-        .custom-add-box input { width: 55px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; text-align: center; }
-        .custom-add-box select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; background: #f8fafc; }
-        .custom-add-box button { padding: 6px 12px; background: #475569; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .btn-plus:active {
+            transform: scale(0.97);
+            opacity: 0.85;
+        }
 
-        .setup-box { background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem; text-align: center; }
-        .setup-box button { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 6px; }
+        .undo-btn {
+            width: 100%;
+            min-height: 40px;
+            border: 1px solid var(--border);
+            background: var(--soft);
+            color: var(--muted);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .undo-btn:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+        .custom-add-box {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .custom-add-box input {
+            min-width: 0;
+            flex: 1;
+            padding: 9px 6px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.9rem;
+            text-align: center;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .custom-add-box select {
+            padding: 9px 6px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.85rem;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .custom-add-box button {
+            min-height: 40px;
+            padding: 8px 12px;
+            background: #475569;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .setup-box {
+            background: var(--soft);
+            padding: 13px;
+            border-radius: 9px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .setup-box input {
+            width: 80px;
+            padding: 7px;
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 7px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .setup-box button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 9px 13px;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 7px;
+        }
+
+        .picker-card {
+            background: var(--soft-blue);
+            border-color: var(--soft-blue-border);
+        }
+
+        .picker-card h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: #1e40af;
+        }
+
+        .picker-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .picker-row:last-child {
+            border-bottom: none;
+        }
+
+        .picker-row label {
+            flex: 1;
+            cursor: pointer;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .picker-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #2563eb;
+        }
+
+        .picker-row button {
+            background: var(--soft);
+            border: 1px solid var(--border);
+            padding: 7px 9px;
+            min-height: 36px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text);
+            white-space: nowrap;
+        }
 
         .history-btn {
-            background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px;
-            width: 100%; padding: 8px; margin-top: 12px; font-size: 0.9rem;
-            font-weight: 600; color: #475569; cursor: pointer;
+            background: var(--soft);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            width: 100%;
+            padding: 9px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
         }
-        .history-btn:hover { background: #e2e8f0; }
 
-        .history-box { display: none; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 0.85rem; }
-        .history-box.active { display: block; }
-        .history-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f8fafc; }
+        .history-box {
+            display: none;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            font-size: 0.85rem;
+        }
 
-        .picker-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
-        .picker-row:last-child { border-bottom: none; }
-        .picker-row button { background: #e2e8f0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; color: #334155; }
-        .picker-row button:hover { background: #cbd5e1; }
+        .history-box.active {
+            display: block;
+        }
 
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-        
-        .back-btn { background: #475569; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--soft);
+        }
 
-        /* Jubileumi gratuláló popup stílus - Eredeti képarányhoz igazítva */
+        .history-row:last-child {
+            border-bottom: none;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stat {
+            background: var(--soft);
+            border-radius: 9px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            display: block;
+            color: var(--muted);
+            font-size: 0.72rem;
+            margin-top: 3px;
+        }
+
+        .streak {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin: 4px 0 0;
+        }
+
+        .streak strong {
+            color: #ea580c;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            margin: 0 0 8px;
+        }
+
+        .settings-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .settings-actions button {
+            min-height: 42px;
+            border: 1px solid var(--border);
+            background: var(--soft);
+            color: var(--text);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .settings-actions .danger {
+            color: var(--danger);
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            padding: 10px 0;
+        }
+
+        .success-message {
+            color: var(--success);
+            font-weight: 700;
+        }
+
         #congrats-popup {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); z-index: 999; justify-content: center; align-items: center;
-            animation: fadeIn 0.3s ease;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
         }
+
         .popup-content {
-            background: white; padding: 20px; border-radius: 20px; text-align: center;
-            max-width: 350px; width: 90%;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
         .popup-content img {
             width: 100%;
             height: auto;
             object-fit: contain;
-            background-color: transparent;
             border-radius: 10px;
             margin-bottom: 15px;
         }
-        .popup-content h2 { color: #16a34a; margin: 0 0 5px 0; font-size: 1.5rem; }
-        .popup-content p { color: #475569; margin: 0; font-size: 1.1rem; font-weight: 500; }
+
+        .popup-content h2 {
+            color: var(--success);
+            margin: 0 0 5px;
+            font-size: 1.5rem;
+        }
+
+        .popup-content p {
+            color: var(--muted);
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .popup-close {
+            margin-top: 15px;
+            padding: 9px 16px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        /* Színek */
-        .card.blue .val-display { color: #2563eb; } .card.blue .btn-plus { background: #2563eb; }
-        .card.green .val-display { color: #16a34a; } .card.green .btn-plus { background: #16a34a; }
-        .card.red .val-display { color: #dc2626; } .card.red .btn-plus { background: #dc2626; }
-        .card.purple .val-display { color: #7c3aed; } .card.purple .btn-plus { background: #7c3aed; }
-        .card.orange .val-display { color: #ea580c; } .card.orange .btn-plus { background: #ea580c; }
-        .card.teal .val-display { color: #0d9488; } .card.teal .btn-plus { background: #0d9488; }
-        .card.pink .val-display { color: #db2777; } .card.pink .btn-plus { background: #db2777; }
-        .card.indigo .val-display { color: #4f46e5; } .card.indigo .btn-plus { background: #4f46e5; }
-        .card.amber .val-display { color: #d97706; } .card.amber .btn-plus { background: #d97706; }
-        .card.cyan .val-display { color: #0891b2; } .card.cyan .btn-plus { background: #0891b2; }
+        .card.blue .val-display { color: #2563eb; }
+        .card.green .val-display { color: #16a34a; }
+        .card.red .val-display { color: #dc2626; }
+        .card.purple .val-display { color: #7c3aed; }
+        .card.orange .val-display { color: #ea580c; }
+        .card.teal .val-display { color: #0d9488; }
+        .card.pink .val-display { color: #db2777; }
+        .card.indigo .val-display { color: #4f46e5; }
+        .card.amber .val-display { color: #d97706; }
+        .card.cyan .val-display { color: #0891b2; }
+
+        .card.blue .progress-bar { background: #2563eb; }
+        .card.green .progress-bar { background: #16a34a; }
+        .card.red .progress-bar { background: #dc2626; }
+        .card.purple .progress-bar { background: #7c3aed; }
+        .card.orange .progress-bar { background: #ea580c; }
+        .card.teal .progress-bar { background: #0d9488; }
+        .card.pink .progress-bar { background: #db2777; }
+        .card.indigo .progress-bar { background: #4f46e5; }
+        .card.amber .progress-bar { background: #d97706; }
+        .card.cyan .progress-bar { background: #0891b2; }
+
+        @media (max-width: 380px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 13px;
+            }
+
+            .target-box {
+                font-size: 0.75rem;
+            }
+
+            .target-box input {
+                width: 58px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<!-- GRATULÁLÓ POPUP A KACSINTÓS KUTYÁVAL -->
+<!-- GRATULÁLÓ POPUP -->
 <div id="congrats-popup" onclick="bezárPopup()">
     <div class="popup-content" onclick="event.stopPropagation()">
-        <img src="ikon_kacsinto.png" alt="Gratulálok!" onerror="this.src='ikon.png'">
+        <img src="ikon_kacsinto.png"
+             alt="Gratulálok!"
+             onerror="this.src='ikon.png'">
+
         <h2>Szép volt!</h2>
         <p>Teljesítetted a mai napi célt! 💪🐶</p>
-        <button onclick="bezárPopup()" style="margin-top:15px; padding:8px 16px; background:#16a34a; color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Köszönöm!</button>
+
+        <button class="popup-close" onclick="bezárPopup()">
+            Köszönöm!
+        </button>
     </div>
 </div>
 
 <div class="container">
+
     <!-- FŐOLDAL -->
     <div id="main-view" class="view-section active">
+
         <h1>Napi Edzés Napló</h1>
-        
-        <!-- Napi gyakorlat kiválasztó panel -->
-        <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
-            <h3 style="margin-top:0; font-size:1rem; color:#1e40af;">Ma végzett gyakorlatok kiválasztása</h3>
-            <div id="picker-container" style="display:flex; flex-direction:column; gap:4px; font-size:0.9rem;"></div>
+
+        <div class="top-actions">
+            <button class="small-btn" onclick="exportData()">
+                📤 Mentés
+            </button>
+
+            <button class="small-btn" onclick="triggerImport()">
+                📥 Visszaállítás
+            </button>
+
+            <button class="small-btn" onclick="toggleSettings()">
+                ⚙️ Beállítások
+            </button>
         </div>
 
+        <!-- BEÁLLÍTÁSOK -->
+        <div id="settings-card" class="card" style="display:none;">
+            <h3 class="section-title">Beállítások és adatkezelés</h3>
+
+            <div class="settings-actions">
+                <button onclick="exportData()">📤 Adatok mentése</button>
+                <button onclick="triggerImport()">📥 Adatok betöltése</button>
+                <button onclick="resetToday()" class="danger">🗑️ Mai nap törlése</button>
+                <button onclick="resetAllData()" class="danger">⚠️ Minden adat törlése</button>
+            </div>
+
+            <input
+                type="file"
+                id="import-file"
+                accept=".json,application/json"
+                style="display:none;"
+                onchange="importData(event)"
+            >
+        </div>
+
+        <!-- GYAKORLATOK -->
+        <div class="card picker-card">
+            <h3>Ma végzett gyakorlatok kiválasztása</h3>
+            <div id="picker-container"></div>
+        </div>
+
+        <!-- NAPI ÖSSZESÍTŐ -->
+        <div id="daily-summary"></div>
+
+        <!-- EDZÉSKÁRTYÁK -->
         <div id="cards-container"></div>
+
     </div>
 
     <!-- TELJES ELŐZMÉNY NÉZET -->
     <div id="history-view" class="view-section">
-        <button class="back-btn" onclick="valtView('main')">← Vissza</button>
+
+        <button class="back-btn" onclick="valtView('main')">
+            ← Vissza
+        </button>
+
         <h1 id="full-history-title">Előzmények</h1>
+
         <div class="card" id="full-history-list"></div>
+
     </div>
+
 </div>
 
 <script>
+    /*
+     * ============================================================
+     * NAPI EDZÉS NAPLÓ
+     * Adatmodell: Szamlalo v2
+     * ============================================================
+     */
+
+    const STORAGE_KEY = 'szamlalo_v2';
+    const STORAGE_VERSION = 2;
+
     const gyakorlatokDef = [
-        { id: 'fekvo', name: 'Fekvőtámasz', color: 'blue', type: 'db' },
-        { id: 'felules', name: 'Felülés', color: 'purple', type: 'db' },
-        { id: 'futas', name: 'Futás', color: 'indigo', type: 'sec' },
-        { id: 'guggolas', name: 'Guggolás', color: 'green', type: 'db' },
-        { id: 'haspres', name: 'Hasprés', color: 'orange', type: 'db' },
-        { id: 'hulahopp', name: 'Hulahopp karika', color: 'cyan', type: 'sec' },
-        { id: 'kerekpar', name: 'Kerékpározás', color: 'amber', type: 'sec' },
-        { id: 'labemeles', name: 'Lábemelés', color: 'red', type: 'db' },
-        { id: 'plank', name: 'Plank', color: 'teal', type: 'sec' },
-        { id: 'ugralokotel', name: 'Ugrálókötél', color: 'pink', type: 'sec' }
+        { id: 'fekvo',       name: 'Fekvőtámasz',     color: 'blue',   type: 'db',  defaultGoal: 100 },
+        { id: 'felules',     name: 'Felülés',         color: 'purple', type: 'db',  defaultGoal: 100 },
+        { id: 'futas',       name: 'Futás',           color: 'indigo', type: 'sec', defaultGoal: 300 },
+        { id: 'guggolas',    name: 'Guggolás',        color: 'green',  type: 'db',  defaultGoal: 100 },
+        { id: 'haspres',     name: 'Hasprés',         color: 'orange', type: 'db',  defaultGoal: 100 },
+        { id: 'hulahopp',    name: 'Hulahopp karika',  color: 'cyan',   type: 'sec', defaultGoal: 300 },
+        { id: 'kerekpar',    name: 'Kerékpározás',    color: 'amber',  type: 'sec', defaultGoal: 1800 },
+        { id: 'labemeles',   name: 'Lábemelés',       color: 'red',    type: 'db',  defaultGoal: 100 },
+        { id: 'plank',       name: 'Plank',           color: 'teal',   type: 'sec', defaultGoal: 300 },
+        { id: 'ugralokotel', name: 'Ugrálókötél',     color: 'pink',   type: 'sec', defaultGoal: 300 }
     ];
 
+    let utolsoMuvelet = null;
+
+
+    /* ============================================================
+       DÁTUMKEZELÉS
+       ============================================================ */
+
     function getTodayString() {
-        return new Date().toISOString().split('T')[0];
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+
+        const parts = dateString.split('-');
+
+        if (parts.length !== 3) {
+            return dateString;
+        }
+
+        return `${parts[2]}.${parts[1]}.${parts[0]}.`;
+    }
+
+    function dateFromString(dateString) {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
     function formatTime(sec) {
-        let m = Math.floor(sec / 60);
-        let s = sec % 60;
-        return m > 0 ? `${m}p ${s}mp` : `${s}mp`;
+        sec = Math.max(0, Math.round(Number(sec) || 0));
+
+        const hours = Math.floor(sec / 3600);
+        const minutes = Math.floor((sec % 3600) / 60);
+        const seconds = sec % 60;
+
+        if (hours > 0) {
+            return `${hours}ó ${minutes}p`;
+        }
+
+        if (minutes > 0) {
+            return `${minutes}p ${seconds}mp`;
+        }
+
+        return `${seconds}mp`;
     }
 
-    function initPicker() {
-        let today = getTodayString();
-        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '[]');
-        
-        let html = '';
+
+    /* ============================================================
+       ADATTÁROLÁS
+       ============================================================ */
+
+    function createEmptyData() {
+        const data = {
+            version: STORAGE_VERSION,
+            activeExercises: {},
+            goals: {},
+            history: {},
+            lastUpdated: new Date().toISOString()
+        };
+
         gyakorlatokDef.forEach(g => {
-            let checked = activeList.includes(g.id) ? 'checked' : '';
-            html += `
-                <div class="picker-row">
-                    <label><input type="checkbox" value="${g.id}" ${checked} onchange="valasztasValtozott()"> ${g.name}</label>
-                    <button onclick="nyitTeljesElozmeny('${g.id}')">📅 Előzmények</button>
-                </div>
-            `;
+            data.history[g.id] = {};
+            data.goals[g.id] = g.defaultGoal;
         });
-        document.getElementById('picker-container').innerHTML = html;
+
+        return data;
     }
 
-    function valasztasValtozott() {
-        let today = getTodayString();
-        let checkboxes = document.querySelectorAll('#picker-container input[type="checkbox"]');
-        let selected = [];
-        checkboxes.forEach(cb => {
-            if (cb.checked) selected.push(cb.value);
-        });
-        localStorage.setItem('active_ex_' + today, JSON.stringify(selected));
-        renderApp();
-    }
+    function saveData(data) {
+        data.version = STORAGE_VERSION;
+        data.lastUpdated = new Date().toISOString();
 
-    function mentiCelt(id) {
-        let today = getTodayString();
-        let inputVal = document.getElementById('setup_cel_' + id).value;
-        let celSzam = parseInt(inputVal);
-        if (celSzam > 0) {
-            localStorage.setItem(`cel_${id}_${today}`, celSzam);
-            renderApp();
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (error) {
+            alert('Nem sikerült elmenteni az adatokat. Lehet, hogy megtelt a böngésző tárhelye.');
+            console.error(error);
         }
     }
 
+    function loadData() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+
+            if (raw) {
+                const parsed = JSON.parse(raw);
+
+                if (parsed && typeof parsed === 'object') {
+                    return normalizeData(parsed);
+                }
+            }
+        } catch (error) {
+            console.warn('A Szamlalo v2 adatai sérültek, új adatstruktúra készül.', error);
+        }
+
+        return migrateOldData();
+    }
+
+    function normalizeData(data) {
+        const clean = createEmptyData();
+
+        if (data.activeExercises && typeof data.activeExercises === 'object') {
+            clean.activeExercises = data.activeExercises;
+        }
+
+        if (data.goals && typeof data.goals === 'object') {
+            Object.keys(data.goals).forEach(id => {
+                const value = Number(data.goals[id]);
+
+                if (Number.isFinite(value) && value > 0) {
+                    clean.goals[id] = Math.round(value);
+                }
+            });
+        }
+
+        if (data.history && typeof data.history === 'object') {
+            Object.keys(clean.history).forEach(id => {
+                if (
+                    data.history[id] &&
+                    typeof data.history[id] === 'object'
+                ) {
+                    Object.keys(data.history[id]).forEach(date => {
+                        const value = Number(data.history[id][date]);
+
+                        if (Number.isFinite(value) && value >= 0) {
+                            clean.history[id][date] = value;
+                        }
+                    });
+                }
+            });
+        }
+
+        return clean;
+    }
+
+    /*
+     * A régi alkalmazásból automatikusan átvesszük:
+     *
+     * history_fekvo
+     * history_felules
+     * ...
+     *
+     * cel_fekvo_2026-09-08
+     * active_ex_2026-09-08
+     */
+    function migrateOldData() {
+        const data = createEmptyData();
+        let foundOldData = false;
+
+        gyakorlatokDef.forEach(g => {
+
+            try {
+                const oldHistory = localStorage.getItem('history_' + g.id);
+
+                if (oldHistory) {
+                    const parsed = JSON.parse(oldHistory);
+
+                    if (parsed && typeof parsed === 'object') {
+                        Object.keys(parsed).forEach(date => {
+                            const value = Number(parsed[date]);
+
+                            if (Number.isFinite(value) && value >= 0) {
+                                data.history[g.id][date] = value;
+                                foundOldData = true;
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Régi előzmény nem olvasható:', g.id, error);
+            }
+
+            /*
+             * A régi alkalmazásban lehetett:
+             * cel_id
+             * cel_id_datum
+             */
+            const defaultGoal = localStorage.getItem('cel_' + g.id);
+
+            if (defaultGoal !== null) {
+                const value = Number(defaultGoal);
+
+                if (Number.isFinite(value) && value > 0) {
+                    data.goals[g.id] = Math.round(value);
+                    foundOldData = true;
+                }
+            }
+        });
+
+        /*
+         * Régi napi aktív gyakorlatok átvétele.
+         */
+        const possibleDates = [];
+
+        const today = getTodayString();
+        possibleDates.push(today);
+
+        for (let i = 1; i <= 365; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+
+            possibleDates.push(`${y}-${m}-${d}`);
+        }
+
+        possibleDates.forEach(date => {
+            try {
+                const raw = localStorage.getItem('active_ex_' + date);
+
+                if (raw) {
+                    const list = JSON.parse(raw);
+
+                    if (Array.isArray(list)) {
+                        data.activeExercises[date] = list.filter(id =>
+                            gyakorlatokDef.some(g => g.id === id)
+                        );
+
+                        foundOldData = true;
+                    }
+                }
+            } catch (error) {
+                console.warn('Régi aktívlista nem olvasható:', date, error);
+            }
+        });
+
+        /*
+         * Régi napi célok átvétele az előzmények dátumai alapján.
+         */
+        gyakorlatokDef.forEach(g => {
+            Object.keys(data.history[g.id]).forEach(date => {
+                const oldGoal = localStorage.getItem(`cel_${g.id}_${date}`);
+
+                if (oldGoal !== null) {
+                    const value = Number(oldGoal);
+
+                    if (Number.isFinite(value) && value > 0) {
+                        /*
+                         * Az új rendszerben napi célként tároljuk.
+                         */
+                        if (!data.goals[g.id + '_' + date]) {
+                            data.goals[g.id + '_' + date] = Math.round(value);
+                        }
+
+                        foundOldData = true;
+                    }
+                }
+            });
+        });
+
+        saveData(data);
+
+        if (foundOldData) {
+            console.info('A régi Szamlalo adatok sikeresen át lettek emelve.');
+        }
+
+        return data;
+    }
+
+
+    function getActiveExercises(data, date) {
+        if (
+            data.activeExercises &&
+            Array.isArray(data.activeExercises[date])
+        ) {
+            return data.activeExercises[date];
+        }
+
+        return [];
+    }
+
+    function getGoal(data, id, date) {
+        const dailyKey = id + '_' + date;
+
+        if (
+            data.goals &&
+            Number.isFinite(Number(data.goals[dailyKey])) &&
+            Number(data.goals[dailyKey]) > 0
+        ) {
+            return Number(data.goals[dailyKey]);
+        }
+
+        if (
+            data.goals &&
+            Number.isFinite(Number(data.goals[id])) &&
+            Number(data.goals[id]) > 0
+        ) {
+            return Number(data.goals[id]);
+        }
+
+        const g = gyakorlatokDef.find(x => x.id === id);
+
+        return g ? g.defaultGoal : 100;
+    }
+
+
+    /* ============================================================
+       SEGÉDFÜGGVÉNYEK
+       ============================================================ */
+
+    function getHistory(data, id) {
+        if (!data.history[id]) {
+            data.history[id] = {};
+        }
+
+        return data.history[id];
+    }
+
+    function getTodayValue(data, id, date = getTodayString()) {
+        const history = getHistory(data, id);
+
+        return Number(history[date]) || 0;
+    }
+
+    function formatValue(g, value) {
+        return g.type === 'sec'
+            ? formatTime(value)
+            : `${value} db`;
+    }
+
+    function formatGoal(g, goal) {
+        return g.type === 'sec'
+            ? formatTime(goal)
+            : `${goal} db`;
+    }
+
+    function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+
+    /* ============================================================
+       GYAKORLAT VÁLASZTÓ
+       ============================================================ */
+
+    function initPicker() {
+        const data = loadData();
+        const today = getTodayString();
+        const activeList = getActiveExercises(data, today);
+
+        const container = document.getElementById('picker-container');
+
+        let html = '';
+
+        gyakorlatokDef.forEach(g => {
+
+            const checked = activeList.includes(g.id)
+                ? 'checked'
+                : '';
+
+            html += `
+                <div class="picker-row">
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="${g.id}"
+                            ${checked}
+                            onchange="valasztasValtozott()"
+                        >
+
+                        <span>${g.name}</span>
+                    </label>
+
+                    <button
+                        onclick="nyitTeljesElozmeny('${g.id}')"
+                    >
+                        📅 Előzmények
+                    </button>
+
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+
+    function valasztasValtozott() {
+        const data = loadData();
+        const today = getTodayString();
+
+        const checkboxes = document.querySelectorAll(
+            '#picker-container input[type="checkbox"]'
+        );
+
+        const selected = [];
+
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                selected.push(cb.value);
+            }
+        });
+
+        data.activeExercises[today] = selected;
+
+        saveData(data);
+
+        renderApp();
+    }
+
+
+    /* ============================================================
+       CÉLOK
+       ============================================================ */
+
+    function mentiCelt(id) {
+        const data = loadData();
+        const today = getTodayString();
+
+        const input = document.getElementById('setup_cel_' + id);
+
+        if (!input) return;
+
+        const value = Number(input.value);
+
+        if (!Number.isFinite(value) || value <= 0) {
+            alert('Adj meg egy 0-nál nagyobb célt!');
+            return;
+        }
+
+        data.goals[id + '_' + today] = Math.round(value);
+
+        /*
+         * Ha még nincs alapértelmezett cél, azt is beállítjuk.
+         */
+        if (!data.goals[id]) {
+            data.goals[id] = Math.round(value);
+        }
+
+        saveData(data);
+
+        renderApp();
+    }
+
+
+    function modositMaiCelt(id, value) {
+        const data = loadData();
+        const today = getTodayString();
+
+        const goal = Number(value);
+
+        if (!Number.isFinite(goal) || goal <= 0) {
+            alert('A célértéknek 0-nál nagyobbnak kell lennie.');
+            renderApp();
+            return;
+        }
+
+        data.goals[id + '_' + today] = Math.round(goal);
+
+        saveData(data);
+        renderApp();
+    }
+
+
+    /* ============================================================
+       HOZZÁADÁS
+       ============================================================ */
+
     function hozzaad(id, mennyiseg) {
-        let today = getTodayString();
-        let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
-        let regiErtek = history[today] || 0;
-        let ujErtek = regiErtek + mennyiseg;
-        
-        let cel = parseInt(localStorage.getItem(`cel_${id}_${today}`) || localStorage.getItem('cel_' + id) || 100);
-        
+        const data = loadData();
+        const today = getTodayString();
+
+        const amount = Number(mennyiseg);
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            return;
+        }
+
+        const history = getHistory(data, id);
+
+        const regiErtek = Number(history[today]) || 0;
+        const ujErtek = regiErtek + amount;
+
         history[today] = ujErtek;
-        localStorage.setItem('history_' + id, JSON.stringify(history));
+
+        const cel = getGoal(data, id, today);
+
+        saveData(data);
+
+        /*
+         * Az utolsó műveletet megjegyezzük,
+         * így egy kattintással visszavonható.
+         */
+        utolsoMuvelet = {
+            id,
+            amount,
+            previousValue: regiErtek,
+            newValue: ujErtek,
+            date: today
+        };
 
         if (regiErtek < cel && ujErtek >= cel) {
             mutatPopup();
@@ -223,183 +1194,1086 @@
         renderApp();
     }
 
+
     function egyediHozzaad(id, type) {
-        let input = document.getElementById('custom_' + id);
-        let val = parseInt(input.value);
-        if (!isNaN(val) && val > 0) {
-            let mennyiseg = val;
-            if (type === 'sec') {
-                let unit = document.getElementById('unit_' + id).value;
-                if (unit === 'perc') {
-                    mennyiseg = val * 60;
-                }
-            }
-            hozzaad(id, mennyiseg);
-            input.value = '';
-        }
-    }
+        const input = document.getElementById('custom_' + id);
 
-    function mutatPopup() {
-        document.getElementById('congrats-popup').style.display = 'flex';
-    }
+        if (!input) return;
 
-    function bezárPopup() {
-        document.getElementById('congrats-popup').style.display = 'none';
-    }
+        const value = Number(input.value);
 
-    function valtView(viewName) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        if (viewName === 'main') {
-            document.getElementById('main-view').classList.add('active');
-            initPicker();
-        } else if (viewName === 'history') {
-            document.getElementById('history-view').classList.add('active');
-        }
-    }
-
-    function nyitTeljesElozmeny(id) {
-        let g = gyakorlatokDef.find(x => x.id === id);
-        if (!g) return;
-        
-        document.getElementById('full-history-title').innerText = `${g.name} - Összes előzmény`;
-        let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
-        let sortedDates = Object.keys(history).sort().reverse();
-        
-        let html = '';
-        if (sortedDates.length === 0) {
-            html = '<div style="color:#64748b; text-align:center;">Még nincs rögzített adat.</div>';
-        } else {
-            sortedDates.forEach(d => {
-                let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
-                let cel = localStorage.getItem(`cel_${id}_${d}`) || '-';
-                html += `<div class="history-row"><span><b>${d}</b></span><span>${valStr} (Cél: ${g.type === 'sec' ? formatTime(cel) : cel + ' db'})</span></div>`;
-            });
-        }
-        document.getElementById('full-history-list').innerHTML = html;
-        valtView('history');
-    }
-
-    function toggleReszletek(id) {
-        let box = document.getElementById('history_box_' + id);
-        box.classList.toggle('active');
-    }
-
-    function renderApp() {
-        let today = getTodayString();
-        let activeList = JSON.parse(localStorage.getItem('active_ex_' + today) || '[]');
-        let container = document.getElementById('cards-container');
-        let html = '';
-
-        if (activeList.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.9rem; margin-top:20px;">Jelölj ki a fenti listából legalább egy gyakorlatot a kezdéshez!</div>';
-            initPicker();
+        if (!Number.isFinite(value) || value <= 0) {
             return;
         }
 
+        let amount = value;
+
+        if (type === 'sec') {
+            const unit = document.getElementById('unit_' + id);
+
+            if (unit && unit.value === 'perc') {
+                amount = value * 60;
+            }
+        }
+
+        hozzaad(id, amount);
+    }
+
+
+    /* ============================================================
+       VISSZAVONÁS
+       ============================================================ */
+
+    function visszavon() {
+        if (!utolsoMuvelet) {
+            return;
+        }
+
+        const today = getTodayString();
+
+        if (utolsoMuvelet.date !== today) {
+            utolsoMuvelet = null;
+            renderApp();
+            return;
+        }
+
+        const data = loadData();
+        const history = getHistory(data, utolsoMuvelet.id);
+
+        history[today] = Math.max(
+            0,
+            Number(utolsoMuvelet.previousValue) || 0
+        );
+
+        saveData(data);
+
+        utolsoMuvelet = null;
+
+        renderApp();
+    }
+
+
+    /* ============================================================
+       NAPI ÖSSZESÍTŐ
+       ============================================================ */
+
+    function renderDailySummary(data) {
+        const today = getTodayString();
+        const activeList = getActiveExercises(data, today);
+
+        const container = document.getElementById('daily-summary');
+
+        if (activeList.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        let completed = 0;
+
         activeList.forEach(id => {
-            let g = gyakorlatokDef.find(x => x.id === id);
-            if (!g) return;
+            const value = getTodayValue(data, id, today);
+            const goal = getGoal(data, id, today);
 
-            let history = JSON.parse(localStorage.getItem('history_' + id) || '{}');
-            let cel = localStorage.getItem(`cel_${id}_${today}`) || localStorage.getItem('cel_' + id);
-            let maiErtek = history[today] || 0;
-
-            if (!cel) {
-                html += `
-                    <div class="card ${g.color}">
-                        <h2 class="card-title">${g.name}</h2>
-                        <div class="setup-box">
-                            <div>Add meg a mai napi célt!</div>
-                            <input type="number" id="setup_cel_${id}" value="${g.type === 'sec' ? 300 : 100}" style="width:70px; padding:4px; text-align:center; font-size:1rem; margin-top:6px;"> ${g.type === 'sec' ? 'mp' : 'db'}
-                            <br><button onclick="mentiCelt('${id}')">Cél rögzítése és kezdés</button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                let szazalek = Math.min(Math.round((maiErtek / cel) * 100), 100);
-                
-                let sortedDates = Object.keys(history).sort().reverse();
-                let histHtml = '';
-                let last3 = sortedDates.slice(0, 3);
-                
-                if (last3.length === 0) {
-                    histHtml = '<div style="color:#64748b; text-align:center;">Még nincs rögzített nap.</div>';
-                } else {
-                    last3.forEach(d => {
-                        let valStr = g.type === 'sec' ? formatTime(history[d]) : history[d] + ' db';
-                        histHtml += `<div class="history-row"><span>${d === today ? 'Ma' : d}</span><span><b>${valStr}</b></span></div>`;
-                    });
-                }
-
-                let gombokHtml = '';
-                let egyediBoxHtml = '';
-                if (g.type === 'sec') {
-                    gombokHtml = `
-                        <button class="btn-plus" onclick="hozzaad('${id}', 30)">+30mp</button>
-                        <button class="btn-plus" onclick="hozzaad('${id}', 60)">+1p</button>
-                        <button class="btn-plus" onclick="hozzaad('${id}', 300)">+5p</button>
-                    `;
-                    egyediBoxHtml = `
-                        <div class="custom-add-box">
-                            <input type="number" id="custom_${id}" placeholder="Egyedi">
-                            <select id="unit_${id}">
-                                <option value="mp">mp</option>
-                                <option value="perc">perc</option>
-                            </select>
-                            <button onclick="egyediHozzaad('${id}', 'sec')">Hozzáad</button>
-                        </div>
-                    `;
-                } else {
-                    gombokHtml = `
-                        <button class="btn-plus" onclick="hozzaad('${id}', 10)">+10</button>
-                        <button class="btn-plus" onclick="hozzaad('${id}', 20)">+20</button>
-                        <button class="btn-plus" onclick="hozzaad('${id}', 50)">+50</button>
-                    `;
-                    egyediBoxHtml = `
-                        <div class="custom-add-box">
-                            <input type="number" id="custom_${id}" placeholder="Egyedi" style="width:100%;">
-                            <button onclick="egyediHozzaad('${id}', 'db')">Hozzáad</button>
-                        </div>
-                    `;
-                }
-
-                let maiKijelzes = g.type === 'sec' ? formatTime(maiErtek) : maiErtek + ' db';
-
-                html += `
-                    <div class="card ${g.color}">
-                        <div class="card-header">
-                            <h2 class="card-title">${g.name}</h2>
-                            <div class="target-box">Cél: <input type="number" value="${cel}" onchange="localStorage.setItem('cel_${id}_' + getTodayString(), this.value); renderApp();"> ${g.type === 'sec' ? 'mp' : 'db'}</div>
-                        </div>
-                        
-                        <div style="background: #e2e8f0; border-radius: 6px; height: 8px; width: 100%; overflow: hidden; margin-bottom: 8px;">
-                            <div style="background: currentColor; width: ${szazalek}%; height: 100%; transition: width 0.3s;"></div>
-                        </div>
-
-                        <div class="val-display">${maiKijelzes}</div>
-                        
-                        <div class="btn-group">
-                            ${gombokHtml}
-                        </div>
-
-                        ${egyediBoxHtml}
-
-                        <button class="history-btn" onclick="toggleReszletek('${id}')">📋 Elmúlt napok</button>
-                        <div id="history_box_${id}" class="history-box">
-                            ${histHtml}
-                        </div>
-                    </div>
-                `;
+            if (value >= goal) {
+                completed++;
             }
         });
 
+        const percentage = Math.round(
+            (completed / activeList.length) * 100
+        );
+
+        const streak = calculateStreak(data);
+
+        container.innerHTML = `
+            <div class="card">
+
+                <div class="card-header">
+                    <h2 class="card-title">📊 Mai összesítés</h2>
+
+                    <strong>${completed}/${activeList.length}</strong>
+                </div>
+
+                <div class="progress-wrapper">
+                    <div
+                        class="progress-bar"
+                        style="width:${percentage}%; background:#2563eb;"
+                    ></div>
+                </div>
+
+                <div class="progress-text">
+                    ${percentage}% teljesítve
+                </div>
+
+                <p class="streak">
+                    🔥 Jelenlegi sorozat:
+                    <strong>${streak} nap</strong>
+                </p>
+
+                ${
+                    completed === activeList.length
+                        ? `<div class="success-message" style="text-align:center; margin-top:8px;">
+                            🎉 Minden mai cél teljesítve!
+                           </div>`
+                        : ''
+                }
+
+            </div>
+        `;
+    }
+
+
+    /* ============================================================
+       STATISZTIKÁK
+       ============================================================ */
+
+    function calculateWeeklyTotal(data, id) {
+        const today = dateFromString(getTodayString());
+
+        let total = 0;
+
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+
+            date.setDate(today.getDate() - i);
+
+            const dateString = dateToString(date);
+
+            total += getTodayValue(data, id, dateString);
+        }
+
+        return total;
+    }
+
+
+    function calculateRecord(data, id) {
+        const history = getHistory(data, id);
+
+        const values = Object.values(history)
+            .map(Number)
+            .filter(value => Number.isFinite(value) && value >= 0);
+
+        if (values.length === 0) {
+            return 0;
+        }
+
+        return Math.max(...values);
+    }
+
+
+    function calculateAverage(data, id) {
+        const history = getHistory(data, id);
+
+        const values = Object.values(history)
+            .map(Number)
+            .filter(value => Number.isFinite(value) && value > 0);
+
+        if (values.length === 0) {
+            return 0;
+        }
+
+        return Math.round(
+            values.reduce((sum, value) => sum + value, 0) / values.length
+        );
+    }
+
+
+    function calculateStreak(data) {
+        const dates = new Set();
+
+        gyakorlatokDef.forEach(g => {
+            const history = getHistory(data, g.id);
+
+            Object.keys(history).forEach(date => {
+                if (Number(history[date]) > 0) {
+                    dates.add(date);
+                }
+            });
+        });
+
+        let streak = 0;
+
+        const date = dateFromString(getTodayString());
+
+        /*
+         * Ha ma még nincs adat, tegnaptól is számíthatjuk
+         * a már meglévő sorozatot.
+         */
+        const todayString = getTodayString();
+
+        if (!dates.has(todayString)) {
+            date.setDate(date.getDate() - 1);
+        }
+
+        while (true) {
+            const current = dateToString(date);
+
+            if (!dates.has(current)) {
+                break;
+            }
+
+            streak++;
+
+            date.setDate(date.getDate() - 1);
+        }
+
+        return streak;
+    }
+
+
+    function dateToString(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    /* ============================================================
+       KÁRTYÁK KIRAJZOLÁSA
+       ============================================================ */
+
+    function renderApp() {
+        const data = loadData();
+
+        const today = getTodayString();
+
+        const activeList = getActiveExercises(
+            data,
+            today
+        );
+
+        const container = document.getElementById('cards-container');
+
+        renderDailySummary(data);
+
+        if (activeList.length === 0) {
+
+            container.innerHTML = `
+                <div class="card">
+                    <div class="empty">
+                        Jelölj ki a fenti listából legalább egy
+                        gyakorlatot a kezdéshez! 💪
+                    </div>
+                </div>
+            `;
+
+            initPicker();
+
+            return;
+        }
+
+        let html = '';
+
+        activeList.forEach(id => {
+
+            const g = gyakorlatokDef.find(
+                x => x.id === id
+            );
+
+            if (!g) return;
+
+            const history = getHistory(data, id);
+
+            const maiErtek = Number(
+                history[today]
+            ) || 0;
+
+            const cel = getGoal(
+                data,
+                id,
+                today
+            );
+
+            const szazalek = clamp(
+                Math.round((maiErtek / cel) * 100),
+                0,
+                100
+            );
+
+            const sortedDates = Object.keys(history)
+                .sort()
+                .reverse();
+
+            const last3 = sortedDates.slice(0, 3);
+
+            let histHtml = '';
+
+            if (last3.length === 0) {
+
+                histHtml = `
+                    <div class="empty">
+                        Még nincs rögzített nap.
+                    </div>
+                `;
+
+            } else {
+
+                last3.forEach(date => {
+
+                    const value = history[date];
+
+                    histHtml += `
+                        <div class="history-row">
+
+                            <span>
+                                ${
+                                    date === today
+                                        ? 'Ma'
+                                        : formatDate(date)
+                                }
+                            </span>
+
+                            <span>
+                                <b>
+                                    ${formatValue(g, value)}
+                                </b>
+                            </span>
+
+                        </div>
+                    `;
+                });
+            }
+
+            let gombokHtml = '';
+            let egyediBoxHtml = '';
+
+            if (g.type === 'sec') {
+
+                gombokHtml = `
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',30)"
+                    >
+                        +30mp
+                    </button>
+
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',60)"
+                    >
+                        +1p
+                    </button>
+
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',300)"
+                    >
+                        +5p
+                    </button>
+                `;
+
+                egyediBoxHtml = `
+                    <div class="custom-add-box">
+
+                        <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            id="custom_${id}"
+                            placeholder="Egyedi"
+                            onkeydown="handleEnter(event,'${id}','sec')"
+                        >
+
+                        <select id="unit_${id}">
+                            <option value="mp">mp</option>
+                            <option value="perc">perc</option>
+                        </select>
+
+                        <button
+                            onclick="egyediHozzaad('${id}','sec')"
+                        >
+                            Hozzáad
+                        </button>
+
+                    </div>
+                `;
+
+            } else {
+
+                gombokHtml = `
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',10)"
+                    >
+                        +10
+                    </button>
+
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',20)"
+                    >
+                        +20
+                    </button>
+
+                    <button
+                        class="btn-plus"
+                        onclick="hozzaad('${id}',50)"
+                    >
+                        +50
+                    </button>
+                `;
+
+                egyediBoxHtml = `
+                    <div class="custom-add-box">
+
+                        <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            id="custom_${id}"
+                            placeholder="Egyedi"
+                            onkeydown="handleEnter(event,'${id}','db')"
+                        >
+
+                        <button
+                            onclick="egyediHozzaad('${id}','db')"
+                        >
+                            Hozzáad
+                        </button>
+
+                    </div>
+                `;
+            }
+
+            const maiKijelzes = formatValue(
+                g,
+                maiErtek
+            );
+
+            const celKijelzes = formatGoal(
+                g,
+                cel
+            );
+
+            html += `
+                <div class="card ${g.color}">
+
+                    <div class="card-header">
+
+                        <h2 class="card-title">
+                            ${g.name}
+                        </h2>
+
+                        <div class="target-box">
+
+                            Cél:
+
+                            <input
+                                type="number"
+                                min="1"
+                                value="${cel}"
+                                onchange="
+                                    modositMaiCelt(
+                                        '${id}',
+                                        this.value
+                                    )
+                                "
+                            >
+
+                            ${g.type === 'sec' ? 'mp' : 'db'}
+
+                        </div>
+
+                    </div>
+
+                    <div class="progress-wrapper">
+                        <div
+                            class="progress-bar"
+                            style="width:${szazalek}%"
+                        ></div>
+                    </div>
+
+                    <div class="progress-text">
+                        ${szazalek}% · Cél: ${celKijelzes}
+                    </div>
+
+                    <div class="val-display">
+                        ${maiKijelzes}
+                    </div>
+
+                    <div class="btn-group">
+                        ${gombokHtml}
+                    </div>
+
+                    ${egyediBoxHtml}
+
+                    <button
+                        class="undo-btn"
+                        onclick="visszavon()"
+                        ${utolsoMuvelet && utolsoMuvelet.id === id ? '' : 'disabled'}
+                    >
+                        ↩️ Utolsó hozzáadás visszavonása
+                    </button>
+
+                    <button
+                        class="history-btn"
+                        onclick="toggleReszletek('${id}')"
+                    >
+                        📋 Elmúlt napok
+                    </button>
+
+                    <div
+                        id="history_box_${id}"
+                        class="history-box"
+                    >
+                        ${histHtml}
+                    </div>
+
+                    <div class="stats-grid">
+
+                        <div class="stat">
+                            <span class="stat-value">
+                                ${formatValue(
+                                    g,
+                                    calculateWeeklyTotal(data,id)
+                                )}
+                            </span>
+
+                            <span class="stat-label">
+                                7 nap összesen
+                            </span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="stat-value">
+                                ${formatValue(
+                                    g,
+                                    calculateRecord(data,id)
+                                )}
+                            </span>
+
+                            <span class="stat-label">
+                                Rekord
+                            </span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="stat-value">
+                                ${formatValue(
+                                    g,
+                                    calculateAverage(data,id)
+                                )}
+                            </span>
+
+                            <span class="stat-label">
+                                Napi átlag
+                            </span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="stat-value">
+                                ${Object.keys(history).length}
+                            </span>
+
+                            <span class="stat-label">
+                                Aktív napok
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="history-btn"
+                        onclick="nyitTeljesElozmeny('${id}')"
+                    >
+                        📅 Összes előzmény
+                    </button>
+
+                </div>
+            `;
+        });
+
         container.innerHTML = html;
+
         initPicker();
     }
 
-    // Alkalmazás indítása
+
+    /* ============================================================
+       ENTER BILLENTYŰ
+       ============================================================ */
+
+    function handleEnter(event, id, type) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            egyediHozzaad(id, type);
+        }
+    }
+
+
+    /* ============================================================
+       ELŐZMÉNYEK
+       ============================================================ */
+
+    function nyitTeljesElozmeny(id) {
+        const g = gyakorlatokDef.find(
+            x => x.id === id
+        );
+
+        if (!g) return;
+
+        const data = loadData();
+
+        const history = getHistory(
+            data,
+            id
+        );
+
+        const sortedDates = Object.keys(history)
+            .sort()
+            .reverse();
+
+        document.getElementById(
+            'full-history-title'
+        ).innerText =
+            `${g.name} - Összes előzmény`;
+
+        let html = '';
+
+        if (sortedDates.length === 0) {
+
+            html = `
+                <div class="empty">
+                    Még nincs rögzített adat.
+                </div>
+            `;
+
+        } else {
+
+            sortedDates.forEach(date => {
+
+                const value = history[date];
+
+                const goal = getGoal(
+                    data,
+                    id,
+                    date
+                );
+
+                const percent = goal > 0
+                    ? Math.min(
+                        Math.round(
+                            (value / goal) * 100
+                        ),
+                        100
+                    )
+                    : 0;
+
+                html += `
+                    <div
+                        class="history-row"
+                        style="display:block;"
+                    >
+
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:10px;
+                        ">
+
+                            <span>
+                                <b>${formatDate(date)}</b>
+                            </span>
+
+                            <span>
+                                <b>
+                                    ${formatValue(g,value)}
+                                </b>
+                            </span>
+
+                        </div>
+
+                        <div style="
+                            color:var(--muted);
+                            font-size:0.75rem;
+                            margin-top:4px;
+                        ">
+                            Cél: ${formatGoal(g,goal)}
+                            · ${percent}%
+                        </div>
+
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById(
+            'full-history-list'
+        ).innerHTML = html;
+
+        valtView('history');
+    }
+
+
+    function toggleReszletek(id) {
+        const box = document.getElementById(
+            'history_box_' + id
+        );
+
+        if (box) {
+            box.classList.toggle('active');
+        }
+    }
+
+
+    /* ============================================================
+       NÉZETVÁLTÁS
+       ============================================================ */
+
+    function valtView(viewName) {
+
+        document.querySelectorAll(
+            '.view-section'
+        ).forEach(el => {
+            el.classList.remove('active');
+        });
+
+        if (viewName === 'main') {
+
+            document.getElementById(
+                'main-view'
+            ).classList.add('active');
+
+            initPicker();
+            renderApp();
+
+        } else if (viewName === 'history') {
+
+            document.getElementById(
+                'history-view'
+            ).classList.add('active');
+        }
+    }
+
+
+    /* ============================================================
+       BEÁLLÍTÁSOK
+       ============================================================ */
+
+    function toggleSettings() {
+        const card = document.getElementById(
+            'settings-card'
+        );
+
+        if (card.style.display === 'none') {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+
+
+    /* ============================================================
+       EXPORT
+       ============================================================ */
+
+    function exportData() {
+        const data = loadData();
+
+        const exportObject = {
+            app: 'Szamlalo',
+            version: STORAGE_VERSION,
+            exportedAt: new Date().toISOString(),
+            data: data
+        };
+
+        const blob = new Blob(
+            [
+                JSON.stringify(
+                    exportObject,
+                    null,
+                    2
+                )
+            ],
+            {
+                type: 'application/json'
+            }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+
+        const today = getTodayString();
+
+        a.href = url;
+        a.download = `szamlalo-mentes-${today}.json`;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+    }
+
+
+    /* ============================================================
+       IMPORT
+       ============================================================ */
+
+    function triggerImport() {
+        document.getElementById(
+            'import-file'
+        ).click();
+    }
+
+
+    function importData(event) {
+        const file = event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+
+            try {
+
+                const parsed = JSON.parse(
+                    e.target.result
+                );
+
+                const importedData =
+                    parsed.data || parsed;
+
+                if (
+                    !importedData ||
+                    typeof importedData !== 'object'
+                ) {
+                    throw new Error(
+                        'Érvénytelen adatfájl.'
+                    );
+                }
+
+                const normalized =
+                    normalizeData(importedData);
+
+                const confirmed = confirm(
+                    'Biztosan visszaállítod ezt a mentést?\n\n' +
+                    'A jelenlegi adatok helyére a mentés adatai kerülnek.'
+                );
+
+                if (!confirmed) {
+                    return;
+                }
+
+                saveData(normalized);
+
+                utolsoMuvelet = null;
+
+                alert(
+                    'Az adatok sikeresen vissza lettek állítva.'
+                );
+
+                renderApp();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    'Nem sikerült beolvasni a mentést. ' +
+                    'Ellenőrizd, hogy valóban Szamlalo JSON-fájlt választottál-e.'
+                );
+
+            } finally {
+
+                event.target.value = '';
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+
+    /* ============================================================
+       MAI NAP NULLÁZÁSA
+       ============================================================ */
+
+    function resetToday() {
+
+        const confirmed = confirm(
+            'Biztosan törlöd a mai nap összes rögzített értékét?\n\n' +
+            'A korábbi napok adatai megmaradnak.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const data = loadData();
+
+        const today = getTodayString();
+
+        gyakorlatokDef.forEach(g => {
+
+            const history = getHistory(
+                data,
+                g.id
+            );
+
+            delete history[today];
+
+            /*
+             * A mai napi cél megmarad.
+             */
+        });
+
+        saveData(data);
+
+        utolsoMuvelet = null;
+
+        renderApp();
+    }
+
+
+    /* ============================================================
+       TELJES ADAT TÖRLÉSE
+       ============================================================ */
+
+    function resetAllData() {
+
+        const confirmed = confirm(
+            'FIGYELEM!\n\n' +
+            'Ez törli az összes edzésadatot, célt és beállítást.\n\n' +
+            'A művelet csak exportált mentésből állítható vissza.\n\n' +
+            'Biztosan folytatod?'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const secondConfirm = confirm(
+            'Utolsó megerősítés:\n\n' +
+            'MINDEN adat törlődni fog.'
+        );
+
+        if (!secondConfirm) {
+            return;
+        }
+
+        localStorage.removeItem(STORAGE_KEY);
+
+        /*
+         * A régi verzió maradék adatait is töröljük.
+         */
+        gyakorlatokDef.forEach(g => {
+
+            localStorage.removeItem(
+                'history_' + g.id
+            );
+
+            localStorage.removeItem(
+                'cel_' + g.id
+            );
+        });
+
+        /*
+         * active_ex_* régi kulcsok törlése.
+         */
+        Object.keys(localStorage).forEach(key => {
+
+            if (
+                key.startsWith('active_ex_') ||
+                key.startsWith('cel_') ||
+                key.startsWith('history_')
+            ) {
+                localStorage.removeItem(key);
+            }
+        });
+
+        utolsoMuvelet = null;
+
+        alert('Minden adat törölve.');
+
+        location.reload();
+    }
+
+
+    /* ============================================================
+       POPUP
+       ============================================================ */
+
+    function mutatPopup() {
+        document.getElementById(
+            'congrats-popup'
+        ).style.display = 'flex';
+    }
+
+
+    function bezárPopup() {
+        document.getElementById(
+            'congrats-popup'
+        ).style.display = 'none';
+    }
+
+
+    /* ============================================================
+       SERVICE WORKER
+       ============================================================ */
+
+    if ('serviceWorker' in navigator) {
+
+        window.addEventListener(
+            'load',
+            () => {
+
+                navigator.serviceWorker
+                    .register('./sw.js')
+                    .then(() => {
+                        console.log(
+                            'Service Worker regisztrálva.'
+                        );
+                    })
+                    .catch(error => {
+                        console.warn(
+                            'Service Worker hiba:',
+                            error
+                        );
+                    });
+
+            }
+        );
+    }
+
+
+    /* ============================================================
+       AUTOMATIKUS NAPVÁLTÁS
+       ============================================================ */
+
+    let utolsoIsmertNap = getTodayString();
+
+    setInterval(() => {
+
+        const aktualisNap = getTodayString();
+
+        if (
+            aktualisNap !== utolsoIsmertNap
+        ) {
+            utolsoIsmertNap = aktualisNap;
+
+            utolsoMuvelet = null;
+
+            renderApp();
+        }
+
+    }, 30000);
+
+
+    /* ============================================================
+       INDÍTÁS
+       ============================================================ */
+
+    loadData();
     initPicker();
     renderApp();
+
 </script>
 
 </body>
