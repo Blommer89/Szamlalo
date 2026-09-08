@@ -2,15 +2,28 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <title>Napi Edzés Napló</title>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="Egyszerű napi edzés- és ismétlésszámláló">
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+    <meta
+        name="description"
+        content="Egyszerű napi edzés- és ismétlésszámláló"
+    >
 
     <style>
+
         :root {
             color-scheme: light;
 
@@ -20,14 +33,20 @@
             --muted: #64748b;
             --border: #e2e8f0;
             --soft: #f1f5f9;
+
             --soft-blue: #eff6ff;
             --soft-blue-border: #bfdbfe;
+
             --danger: #dc2626;
             --success: #16a34a;
-            --shadow: 0 2px 5px rgba(0,0,0,0.04);
+
+            --shadow:
+                0 2px 5px rgba(0,0,0,0.04);
         }
 
+
         @media (prefers-color-scheme: dark) {
+
             :root {
                 color-scheme: dark;
 
@@ -37,27 +56,50 @@
                 --muted: #94a3b8;
                 --border: #334155;
                 --soft: #273449;
+
                 --soft-blue: #172554;
                 --soft-blue-border: #1d4ed8;
-                --shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+                --shadow:
+                    0 2px 8px rgba(0,0,0,0.2);
             }
+
         }
+
 
         * {
             box-sizing: border-box;
         }
 
+
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
             background: var(--bg);
             color: var(--text);
+
             margin: 0;
+
             padding: 16px;
-            padding-bottom: max(24px, env(safe-area-inset-bottom));
+
+            padding-bottom:
+                max(
+                    24px,
+                    env(safe-area-inset-bottom)
+                );
+
             display: flex;
             justify-content: center;
+
             min-height: 100vh;
         }
+
 
         button,
         input,
@@ -65,678 +107,1665 @@
             font: inherit;
         }
 
+
         button {
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color:
+                transparent;
         }
 
+
         .container {
+
             width: 100%;
             max-width: 520px;
+
             position: relative;
         }
 
+
         h1 {
+
             font-size: 1.45rem;
+
             text-align: center;
-            margin: 4px 0 20px;
+
+            margin:
+                4px 0 20px;
         }
+
 
         h2,
         h3 {
             line-height: 1.25;
         }
 
+
         .top-actions {
+
             display: flex;
+
             gap: 8px;
+
             margin-bottom: 12px;
         }
+
 
         .top-actions button {
             flex: 1;
         }
 
+
         .small-btn {
-            border: 1px solid var(--border);
-            background: var(--card);
-            color: var(--text);
-            padding: 9px 10px;
-            border-radius: 8px;
+
+            border:
+                1px solid var(--border);
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
+
+            padding:
+                9px 10px;
+
+            border-radius:
+                8px;
+
             cursor: pointer;
+
             font-weight: 600;
         }
+
 
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow);
+
+            background:
+                var(--card);
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                14px;
+
+            padding:
+                16px;
+
+            margin-bottom:
+                16px;
+
+            box-shadow:
+                var(--shadow);
         }
+
 
         .card-header {
+
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
             gap: 10px;
-            margin-bottom: 8px;
+
+            margin-bottom:
+                8px;
         }
+
 
         .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
+
+            font-size:
+                1.1rem;
+
+            font-weight:
+                700;
+
             margin: 0;
         }
+
 
         .target-box {
-            font-size: 0.82rem;
-            color: var(--muted);
-            white-space: nowrap;
+
+            font-size:
+                0.82rem;
+
+            color:
+                var(--muted);
+
+            white-space:
+                nowrap;
         }
+
 
         .target-box input {
-            width: 68px;
-            padding: 5px 4px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            text-align: center;
-            background: var(--card);
-            color: var(--text);
+
+            width:
+                68px;
+
+            padding:
+                5px 4px;
+
+            font-size:
+                0.85rem;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                6px;
+
+            text-align:
+                center;
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
         }
+
 
         .val-display {
-            font-size: 2.25rem;
-            font-weight: 800;
-            margin: 10px 0 12px;
+
+            font-size:
+                2.25rem;
+
+            font-weight:
+                800;
+
+            margin:
+                10px 0 12px;
         }
+
 
         .progress-wrapper {
-            background: var(--soft);
-            border-radius: 999px;
-            height: 10px;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 7px;
+
+            background:
+                var(--soft);
+
+            border-radius:
+                999px;
+
+            height:
+                10px;
+
+            width:
+                100%;
+
+            overflow:
+                hidden;
+
+            margin-bottom:
+                7px;
         }
+
 
         .progress-bar {
-            height: 100%;
-            border-radius: 999px;
-            transition: width 0.3s ease;
+
+            height:
+                100%;
+
+            border-radius:
+                999px;
+
+            transition:
+                width 0.3s ease;
         }
+
 
         .progress-text {
-            font-size: 0.78rem;
-            color: var(--muted);
-            text-align: right;
-            margin-bottom: 10px;
+
+            font-size:
+                0.78rem;
+
+            color:
+                var(--muted);
+
+            text-align:
+                right;
+
+            margin-bottom:
+                10px;
         }
+
 
         .btn-group {
-            display: flex;
-            gap: 7px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+
+            display:
+                flex;
+
+            gap:
+                7px;
+
+            margin-bottom:
+                8px;
+
+            flex-wrap:
+                wrap;
         }
+
 
         .btn-plus {
-            flex: 1;
-            min-width: 72px;
-            min-height: 44px;
-            border: none;
-            border-radius: 9px;
-            padding: 10px 6px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.05s, opacity 0.15s;
+
+            flex:
+                1;
+
+            min-width:
+                72px;
+
+            min-height:
+                44px;
+
+            border:
+                none;
+
+            border-radius:
+                9px;
+
+            padding:
+                10px 6px;
+
+            font-size:
+                0.9rem;
+
+            font-weight:
+                700;
+
+            color:
+                white;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform 0.05s,
+                opacity 0.15s;
         }
+
 
         .btn-plus:active {
-            transform: scale(0.97);
-            opacity: 0.85;
+
+            transform:
+                scale(0.97);
+
+            opacity:
+                0.85;
         }
+
 
         .undo-btn {
-            width: 100%;
-            min-height: 40px;
-            border: 1px solid var(--border);
-            background: var(--soft);
-            color: var(--muted);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 6px;
+
+            width:
+                100%;
+
+            min-height:
+                40px;
+
+            border:
+                1px solid var(--border);
+
+            background:
+                var(--soft);
+
+            color:
+                var(--muted);
+
+            border-radius:
+                8px;
+
+            font-size:
+                0.85rem;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+            margin-top:
+                6px;
         }
+
 
         .undo-btn:disabled {
-            opacity: 0.45;
-            cursor: default;
+
+            opacity:
+                0.45;
+
+            cursor:
+                default;
         }
+
 
         .custom-add-box {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            align-items: center;
+
+            display:
+                flex;
+
+            gap:
+                6px;
+
+            margin-top:
+                8px;
+
+            align-items:
+                center;
         }
+
 
         .custom-add-box input {
-            min-width: 0;
-            flex: 1;
-            padding: 9px 6px;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            font-size: 0.9rem;
-            text-align: center;
-            background: var(--card);
-            color: var(--text);
+
+            min-width:
+                0;
+
+            flex:
+                1;
+
+            padding:
+                9px 6px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                7px;
+
+            font-size:
+                0.9rem;
+
+            text-align:
+                center;
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
         }
+
 
         .custom-add-box select {
-            padding: 9px 6px;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            font-size: 0.85rem;
-            background: var(--card);
-            color: var(--text);
+
+            padding:
+                9px 6px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                7px;
+
+            font-size:
+                0.85rem;
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
         }
+
 
         .custom-add-box button {
-            min-height: 40px;
-            padding: 8px 12px;
-            background: #475569;
-            color: white;
-            border: none;
-            border-radius: 7px;
-            font-weight: 600;
-            cursor: pointer;
+
+            min-height:
+                40px;
+
+            padding:
+                8px 12px;
+
+            background:
+                #475569;
+
+            color:
+                white;
+
+            border:
+                none;
+
+            border-radius:
+                7px;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
         }
+
 
         .setup-box {
-            background: var(--soft);
-            padding: 13px;
-            border-radius: 9px;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            text-align: center;
+
+            background:
+                var(--soft);
+
+            padding:
+                13px;
+
+            border-radius:
+                9px;
+
+            margin-bottom:
+                12px;
+
+            font-size:
+                0.9rem;
+
+            text-align:
+                center;
         }
+
 
         .setup-box input {
-            width: 80px;
-            padding: 7px;
-            text-align: center;
-            font-size: 1rem;
-            margin-top: 7px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--card);
-            color: var(--text);
+
+            width:
+                80px;
+
+            padding:
+                7px;
+
+            text-align:
+                center;
+
+            font-size:
+                1rem;
+
+            margin-top:
+                7px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                6px;
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
         }
+
 
         .setup-box button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 9px 13px;
-            border-radius: 7px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 7px;
+
+            background:
+                #2563eb;
+
+            color:
+                white;
+
+            border:
+                none;
+
+            padding:
+                9px 13px;
+
+            border-radius:
+                7px;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+            margin-top:
+                7px;
         }
+
 
         .picker-card {
-            background: var(--soft-blue);
-            border-color: var(--soft-blue-border);
+
+            background:
+                var(--soft-blue);
+
+            border-color:
+                var(--soft-blue-border);
         }
+
 
         .picker-card h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: #1e40af;
+
+            margin-top:
+                0;
+
+            font-size:
+                1rem;
+
+            color:
+                #1e40af;
         }
+
 
         .picker-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border);
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            padding:
+                6px 0;
+
+            border-bottom:
+                1px solid var(--border);
         }
+
 
         .picker-row:last-child {
-            border-bottom: none;
+            border-bottom:
+                none;
         }
+
 
         .picker-row label {
-            flex: 1;
-            cursor: pointer;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
+
+            flex:
+                1;
+
+            cursor:
+                pointer;
+
+            min-height:
+                40px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
         }
+
 
         .picker-row input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: #2563eb;
+
+            width:
+                20px;
+
+            height:
+                20px;
+
+            accent-color:
+                #2563eb;
         }
+
 
         .picker-row button {
-            background: var(--soft);
-            border: 1px solid var(--border);
-            padding: 7px 9px;
-            min-height: 36px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: var(--text);
-            white-space: nowrap;
+
+            background:
+                var(--soft);
+
+            border:
+                1px solid var(--border);
+
+            padding:
+                7px 9px;
+
+            min-height:
+                36px;
+
+            border-radius:
+                6px;
+
+            font-size:
+                0.75rem;
+
+            cursor:
+                pointer;
+
+            color:
+                var(--text);
+
+            white-space:
+                nowrap;
         }
+
 
         .history-btn {
-            background: var(--soft);
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            width: 100%;
-            padding: 9px;
-            margin-top: 12px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text);
-            cursor: pointer;
+
+            background:
+                var(--soft);
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                7px;
+
+            width:
+                100%;
+
+            padding:
+                9px;
+
+            margin-top:
+                12px;
+
+            font-size:
+                0.9rem;
+
+            font-weight:
+                600;
+
+            color:
+                var(--text);
+
+            cursor:
+                pointer;
         }
+
 
         .history-box {
-            display: none;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed var(--border);
-            font-size: 0.85rem;
+
+            display:
+                none;
+
+            margin-top:
+                10px;
+
+            padding-top:
+                8px;
+
+            border-top:
+                1px dashed var(--border);
+
+            font-size:
+                0.85rem;
         }
+
 
         .history-box.active {
-            display: block;
+            display:
+                block;
         }
+
 
         .history-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 7px 0;
-            border-bottom: 1px solid var(--soft);
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
+
+            padding:
+                7px 0;
+
+            border-bottom:
+                1px solid var(--soft);
         }
+
 
         .history-row:last-child {
-            border-bottom: none;
+            border-bottom:
+                none;
         }
+
 
         .view-section {
-            display: none;
+            display:
+                none;
         }
+
 
         .view-section.active {
-            display: block;
+            display:
+                block;
         }
+
 
         .back-btn {
-            background: #475569;
-            color: white;
-            border: none;
-            padding: 9px 16px;
-            border-radius: 7px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 16px;
+
+            background:
+                #475569;
+
+            color:
+                white;
+
+            border:
+                none;
+
+            padding:
+                9px 16px;
+
+            border-radius:
+                7px;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+            margin-bottom:
+                16px;
         }
+
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 10px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap:
+                8px;
+
+            margin-top:
+                10px;
         }
+
 
         .stat {
-            background: var(--soft);
-            border-radius: 9px;
-            padding: 10px;
-            text-align: center;
+
+            background:
+                var(--soft);
+
+            border-radius:
+                9px;
+
+            padding:
+                10px;
+
+            text-align:
+                center;
         }
+
 
         .stat-value {
-            display: block;
-            font-size: 1.15rem;
-            font-weight: 800;
+
+            display:
+                block;
+
+            font-size:
+                1.15rem;
+
+            font-weight:
+                800;
         }
+
 
         .stat-label {
-            display: block;
-            color: var(--muted);
-            font-size: 0.72rem;
-            margin-top: 3px;
+
+            display:
+                block;
+
+            color:
+                var(--muted);
+
+            font-size:
+                0.72rem;
+
+            margin-top:
+                3px;
         }
+
 
         .streak {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin: 4px 0 0;
+
+            text-align:
+                center;
+
+            font-size:
+                0.9rem;
+
+            color:
+                var(--muted);
+
+            margin:
+                4px 0 0;
         }
+
 
         .streak strong {
-            color: #ea580c;
+            color:
+                #ea580c;
         }
+
 
         .section-title {
-            font-size: 0.95rem;
-            margin: 0 0 8px;
+
+            font-size:
+                0.95rem;
+
+            margin:
+                0 0 8px;
         }
+
 
         .settings-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                8px;
         }
+
 
         .settings-actions button {
-            min-height: 42px;
-            border: 1px solid var(--border);
-            background: var(--soft);
-            color: var(--text);
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+
+            min-height:
+                42px;
+
+            border:
+                1px solid var(--border);
+
+            background:
+                var(--soft);
+
+            color:
+                var(--text);
+
+            border-radius:
+                8px;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
         }
+
 
         .settings-actions .danger {
-            color: var(--danger);
+            color:
+                var(--danger);
         }
+
 
         .empty {
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.9rem;
-            padding: 10px 0;
+
+            text-align:
+                center;
+
+            color:
+                var(--muted);
+
+            font-size:
+                0.9rem;
+
+            padding:
+                10px 0;
         }
+
 
         .success-message {
-            color: var(--success);
-            font-weight: 700;
+
+            color:
+                var(--success);
+
+            font-weight:
+                700;
         }
+
+
+        /* ============================================================
+           STOPPER
+           ============================================================ */
+
+        .stopwatch {
+
+            margin-top:
+                10px;
+
+            padding:
+                12px;
+
+            background:
+                var(--soft);
+
+            border-radius:
+                10px;
+
+            text-align:
+                center;
+        }
+
+
+        .stopwatch-display {
+
+            font-size:
+                1.7rem;
+
+            font-weight:
+                800;
+
+            font-variant-numeric:
+                tabular-nums;
+
+            margin-bottom:
+                9px;
+        }
+
+
+        .stopwatch.running
+        .stopwatch-display {
+
+            color:
+                var(--success);
+        }
+
+
+        .stopwatch-buttons {
+
+            display:
+                flex;
+
+            gap:
+                7px;
+
+            flex-wrap:
+                wrap;
+        }
+
+
+        .stopwatch-buttons button {
+
+            flex:
+                1;
+
+            min-width:
+                90px;
+
+            min-height:
+                42px;
+
+            border:
+                none;
+
+            border-radius:
+                8px;
+
+            color:
+                white;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
+        }
+
+
+        .stopwatch-start {
+            background:
+                #16a34a;
+        }
+
+
+        .stopwatch-pause {
+            background:
+                #d97706;
+        }
+
+
+        .stopwatch-finish {
+            background:
+                #2563eb;
+        }
+
+
+        .stopwatch-reset {
+            background:
+                #64748b;
+        }
+
+
+        .stopwatch-hint {
+
+            color:
+                var(--muted);
+
+            font-size:
+                0.72rem;
+
+            margin:
+                7px 0 0;
+        }
+
 
         #congrats-popup {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            animation: fadeIn 0.2s ease;
+
+            display:
+                none;
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            background:
+                rgba(0,0,0,0.7);
+
+            z-index:
+                999;
+
+            justify-content:
+                center;
+
+            align-items:
+                center;
+
+            padding:
+                20px;
+
+            animation:
+                fadeIn 0.2s ease;
         }
+
 
         .popup-content {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 350px;
-            width: 100%;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+            background:
+                var(--card);
+
+            padding:
+                20px;
+
+            border-radius:
+                20px;
+
+            text-align:
+                center;
+
+            max-width:
+                350px;
+
+            width:
+                100%;
+
+            box-shadow:
+                0 15px 35px rgba(0,0,0,0.4);
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            align-items:
+                center;
         }
+
 
         .popup-content img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            border-radius: 10px;
-            margin-bottom: 15px;
+
+            width:
+                100%;
+
+            height:
+                auto;
+
+            object-fit:
+                contain;
+
+            border-radius:
+                10px;
+
+            margin-bottom:
+                15px;
         }
+
 
         .popup-content h2 {
-            color: var(--success);
-            margin: 0 0 5px;
-            font-size: 1.5rem;
+
+            margin:
+                0 0 8px;
         }
+
 
         .popup-content p {
-            color: var(--muted);
-            margin: 0;
-            font-size: 1.05rem;
-            font-weight: 500;
+
+            margin:
+                0 0 15px;
+
+            color:
+                var(--muted);
         }
 
-        .popup-close {
-            margin-top: 15px;
-            padding: 9px 16px;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 7px;
-            font-weight: 600;
-            cursor: pointer;
+
+        .popup-content button {
+
+            width:
+                100%;
+
+            min-height:
+                44px;
+
+            border:
+                none;
+
+            border-radius:
+                8px;
+
+            background:
+                #2563eb;
+
+            color:
+                white;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
         }
+
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+            from {
+                opacity:
+                    0;
+            }
+
+            to {
+                opacity:
+                    1;
+            }
         }
 
-        .card.blue .val-display { color: #2563eb; }
-        .card.green .val-display { color: #16a34a; }
-        .card.red .val-display { color: #dc2626; }
-        .card.purple .val-display { color: #7c3aed; }
-        .card.orange .val-display { color: #ea580c; }
-        .card.teal .val-display { color: #0d9488; }
-        .card.pink .val-display { color: #db2777; }
-        .card.indigo .val-display { color: #4f46e5; }
-        .card.amber .val-display { color: #d97706; }
-        .card.cyan .val-display { color: #0891b2; }
-
-        .card.blue .progress-bar { background: #2563eb; }
-        .card.green .progress-bar { background: #16a34a; }
-        .card.red .progress-bar { background: #dc2626; }
-        .card.purple .progress-bar { background: #7c3aed; }
-        .card.orange .progress-bar { background: #ea580c; }
-        .card.teal .progress-bar { background: #0d9488; }
-        .card.pink .progress-bar { background: #db2777; }
-        .card.indigo .progress-bar { background: #4f46e5; }
-        .card.amber .progress-bar { background: #d97706; }
-        .card.cyan .progress-bar { background: #0891b2; }
 
         @media (max-width: 380px) {
+
             body {
-                padding: 10px;
+                padding:
+                    10px;
             }
 
             .card {
-                padding: 13px;
+                padding:
+                    13px;
             }
 
-            .target-box {
-                font-size: 0.75rem;
+            .btn-plus {
+                min-width:
+                    65px;
             }
 
-            .target-box input {
-                width: 58px;
-            }
         }
+
     </style>
 </head>
 
+
 <body>
-
-<!-- GRATULÁLÓ POPUP -->
-<div id="congrats-popup" onclick="bezárPopup()">
-    <div class="popup-content" onclick="event.stopPropagation()">
-        <img src="ikon_kacsinto.png"
-             alt="Gratulálok!"
-             onerror="this.src='ikon.png'">
-
-        <h2>Szép volt!</h2>
-        <p>Teljesítetted a mai napi célt! 💪🐶</p>
-
-        <button class="popup-close" onclick="bezárPopup()">
-            Köszönöm!
-        </button>
-    </div>
-</div>
 
 <div class="container">
 
-    <!-- FŐOLDAL -->
-    <div id="main-view" class="view-section active">
+    <h1>🏋️ Napi Edzés Napló</h1>
 
-        <h1>Napi Edzés Napló</h1>
 
-        <div class="top-actions">
-            <button class="small-btn" onclick="exportData()">
-                📤 Mentés
-            </button>
+    <div class="top-actions">
 
-            <button class="small-btn" onclick="triggerImport()">
-                📥 Visszaállítás
-            </button>
+        <button
+            class="small-btn"
+            onclick="exportData()"
+        >
+            📤 Export
+        </button>
 
-            <button class="small-btn" onclick="toggleSettings()">
-                ⚙️ Beállítások
-            </button>
-        </div>
+        <button
+            class="small-btn"
+            onclick="triggerImport()"
+        >
+            📥 Import
+        </button>
 
-        <!-- BEÁLLÍTÁSOK -->
-        <div id="settings-card" class="card" style="display:none;">
-            <h3 class="section-title">Beállítások és adatkezelés</h3>
-
-            <div class="settings-actions">
-                <button onclick="exportData()">📤 Adatok mentése</button>
-                <button onclick="triggerImport()">📥 Adatok betöltése</button>
-                <button onclick="resetToday()" class="danger">🗑️ Mai nap törlése</button>
-                <button onclick="resetAllData()" class="danger">⚠️ Minden adat törlése</button>
-            </div>
-
-            <input
-                type="file"
-                id="import-file"
-                accept=".json,application/json"
-                style="display:none;"
-                onchange="importData(event)"
-            >
-        </div>
-
-        <!-- GYAKORLATOK -->
-        <div class="card picker-card">
-            <h3>Ma végzett gyakorlatok kiválasztása</h3>
-            <div id="picker-container"></div>
-        </div>
-
-        <!-- NAPI ÖSSZESÍTŐ -->
-        <div id="daily-summary"></div>
-
-        <!-- EDZÉSKÁRTYÁK -->
-        <div id="cards-container"></div>
+        <button
+            class="small-btn"
+            onclick="toggleSettings()"
+        >
+            ⚙️ Beállítások
+        </button>
 
     </div>
 
-    <!-- TELJES ELŐZMÉNY NÉZET -->
-    <div id="history-view" class="view-section">
 
-        <button class="back-btn" onclick="valtView('main')">
+    <!-- ============================================================
+         BEÁLLÍTÁSOK
+         ============================================================ -->
+
+    <div
+        id="settings-section"
+        class="card"
+        style="display:none;"
+    >
+
+        <h3 class="section-title">
+            Beállítások
+        </h3>
+
+
+        <div class="settings-actions">
+
+            <button onclick="resetToday()">
+                🔄 Mai nap nullázása
+            </button>
+
+            <button
+                class="danger"
+                onclick="resetAllData()"
+            >
+                🗑️ Minden adat törlése
+            </button>
+
+        </div>
+
+        <input
+            type="file"
+            id="import-file"
+            accept=".json,application/json"
+            style="display:none"
+            onchange="importData(event)"
+        >
+
+    </div>
+
+
+    <!-- ============================================================
+         FŐ NÉZET
+         ============================================================ -->
+
+    <div
+        id="main-view"
+        class="view-section active"
+    >
+
+
+        <!-- GYAKORLATVÁLASZTÓ -->
+
+        <div class="card picker-card">
+
+            <h3>
+                📝 Mai gyakorlatok
+            </h3>
+
+            <div id="picker">
+            </div>
+
+        </div>
+
+
+        <!-- NAPI ÖSSZESÍTŐ -->
+
+        <div
+            id="daily-summary"
+            class="card"
+        >
+        </div>
+
+
+        <!-- GYAKORLATOK -->
+
+        <div id="exercise-list">
+        </div>
+
+
+    </div>
+
+
+    <!-- ============================================================
+         TELJES ELŐZMÉNYEK
+         ============================================================ -->
+
+    <div
+        id="history-view"
+        class="view-section"
+    >
+
+        <button
+            class="back-btn"
+            onclick="valtView('main')"
+        >
             ← Vissza
         </button>
 
-        <h1 id="full-history-title">Előzmények</h1>
 
-        <div class="card" id="full-history-list"></div>
+        <div class="card">
+
+            <h2>
+                📊 Teljes előzmények
+            </h2>
+
+            <div id="full-history">
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================================================================
+     GRATULÁCIÓS POPUP
+     ================================================================ -->
+
+<div id="congrats-popup">
+
+    <div class="popup-content">
+
+        <img
+            src="ikon_kacsinto.png"
+            alt="Gratulálok"
+        >
+
+        <h2>
+            🎉 Szép munka!
+        </h2>
+
+        <p>
+            Elérted a mai célodat!
+        </p>
+
+        <button
+            onclick="bezarPopup()"
+        >
+            Rendben
+        </button>
 
     </div>
 
 </div>
 
-<script>
-    /*
-     * ============================================================
-     * NAPI EDZÉS NAPLÓ
-     * Adatmodell: Szamlalo v2
-     * ============================================================
-     */
 
-    const STORAGE_KEY = 'szamlalo_v2';
-    const STORAGE_VERSION = 2;
+<script>
+
+    /* ============================================================
+       ALAPADATOK
+       ============================================================ */
+
+    const STORAGE_KEY =
+        'szamlalo_v2';
+
+    const STORAGE_VERSION =
+        2;
+
 
     const gyakorlatokDef = [
-        { id: 'fekvo',       name: 'Fekvőtámasz',     color: 'blue',   type: 'db',  defaultGoal: 100 },
-        { id: 'felules',     name: 'Felülés',         color: 'purple', type: 'db',  defaultGoal: 100 },
-        { id: 'futas',       name: 'Futás',           color: 'indigo', type: 'sec', defaultGoal: 300 },
-        { id: 'guggolas',    name: 'Guggolás',        color: 'green',  type: 'db',  defaultGoal: 100 },
-        { id: 'haspres',     name: 'Hasprés',         color: 'orange', type: 'db',  defaultGoal: 100 },
-        { id: 'hulahopp',    name: 'Hulahopp karika',  color: 'cyan',   type: 'sec', defaultGoal: 300 },
-        { id: 'kerekpar',    name: 'Kerékpározás',    color: 'amber',  type: 'sec', defaultGoal: 1800 },
-        { id: 'labemeles',   name: 'Lábemelés',       color: 'red',    type: 'db',  defaultGoal: 100 },
-        { id: 'plank',       name: 'Plank',           color: 'teal',   type: 'sec', defaultGoal: 300 },
-        { id: 'ugralokotel', name: 'Ugrálókötél',     color: 'pink',   type: 'sec', defaultGoal: 300 }
+
+        {
+            id: 'fekvo',
+            name: 'Fekvőtámasz',
+            color: '#2563eb',
+            type: 'db',
+            defaultGoal: 100
+        },
+
+        {
+            id: 'felules',
+            name: 'Felülés',
+            color: '#9333ea',
+            type: 'db',
+            defaultGoal: 100
+        },
+
+        {
+            id: 'futas',
+            name: 'Futás',
+            color: '#4f46e5',
+            type: 'sec',
+            defaultGoal: 300
+        },
+
+        {
+            id: 'guggolas',
+            name: 'Guggolás',
+            color: '#16a34a',
+            type: 'db',
+            defaultGoal: 100
+        },
+
+        {
+            id: 'haspres',
+            name: 'Hasprés',
+            color: '#ea580c',
+            type: 'db',
+            defaultGoal: 100
+        },
+
+        {
+            id: 'hulahopp',
+            name: 'Hulahopp karika',
+            color: '#0891b2',
+            type: 'sec',
+            defaultGoal: 300
+        },
+
+        {
+            id: 'kerekpar',
+            name: 'Kerékpározás',
+            color: '#d97706',
+            type: 'sec',
+            defaultGoal: 1800
+        },
+
+        {
+            id: 'labemeles',
+            name: 'Lábemelés',
+            color: '#dc2626',
+            type: 'db',
+            defaultGoal: 100
+        },
+
+        {
+            id: 'plank',
+            name: 'Plank',
+            color: '#0f766e',
+            type: 'sec',
+            defaultGoal: 300
+        },
+
+        {
+            id: 'ugralokotel',
+            name: 'Ugrálókötél',
+            color: '#db2777',
+            type: 'sec',
+            defaultGoal: 300
+        }
+
     ];
+
 
     let utolsoMuvelet = null;
 
+    let stopperInterval = null;
+
+    let utolsoIsmertNap =
+        getTodayString();
+
 
     /* ============================================================
-       DÁTUMKEZELÉS
+       DÁTUM
        ============================================================ */
 
     function getTodayString() {
-        const now = new Date();
 
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
+        const now =
+            new Date();
 
-        return `${year}-${month}-${day}`;
+        const year =
+            now.getFullYear();
+
+        const month =
+            String(
+                now.getMonth() + 1
+            ).padStart(2, '0');
+
+        const day =
+            String(
+                now.getDate()
+            ).padStart(2, '0');
+
+        return (
+            `${year}-${month}-${day}`
+        );
     }
 
-    function formatDate(dateString) {
-        if (!dateString) return '';
 
-        const parts = dateString.split('-');
+    function dateFromString(str) {
 
-        if (parts.length !== 3) {
-            return dateString;
-        }
+        const parts =
+            str.split('-');
 
-        return `${parts[2]}.${parts[1]}.${parts[0]}.`;
+        return new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
     }
 
-    function dateFromString(dateString) {
-        const [year, month, day] = dateString.split('-').map(Number);
-        return new Date(year, month - 1, day);
+
+    function formatDate(str) {
+
+        const d =
+            dateFromString(str);
+
+        return d.toLocaleDateString(
+            'hu-HU',
+            {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }
+        );
     }
 
-    function formatTime(sec) {
-        sec = Math.max(0, Math.round(Number(sec) || 0));
 
-        const hours = Math.floor(sec / 3600);
-        const minutes = Math.floor((sec % 3600) / 60);
-        const seconds = sec % 60;
+    function dateToString(date) {
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(2, '0');
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(2, '0');
+
+        return (
+            `${year}-${month}-${day}`
+        );
+    }
+
+
+    /* ============================================================
+       FORMÁZÁS
+       ============================================================ */
+
+    function formatTime(seconds) {
+
+        seconds =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(seconds) || 0
+                )
+            );
+
+        const hours =
+            Math.floor(
+                seconds / 3600
+            );
+
+        const minutes =
+            Math.floor(
+                (seconds % 3600) / 60
+            );
+
+        const secs =
+            seconds % 60;
+
 
         if (hours > 0) {
-            return `${hours}ó ${minutes}p`;
+
+            return (
+                `${hours} óra ` +
+                `${minutes} perc`
+            );
+
         }
+
 
         if (minutes > 0) {
-            return `${minutes}p ${seconds}mp`;
+
+            return (
+                `${minutes} perc ` +
+                `${secs} mp`
+            );
+
         }
 
-        return `${seconds}mp`;
+
+        return `${secs} mp`;
+    }
+
+
+    function formatValue(value, type) {
+
+        value =
+            Number(value) || 0;
+
+        if (type === 'sec') {
+
+            return formatTime(value);
+
+        }
+
+        return `${value} db`;
+    }
+
+
+    function formatGoal(goal, type) {
+
+        return formatValue(
+            goal,
+            type
+        );
+    }
+
+
+    function clamp(value, min, max) {
+
+        return Math.min(
+            max,
+            Math.max(
+                min,
+                value
+            )
+        );
     }
 
 
@@ -745,351 +1774,618 @@
        ============================================================ */
 
     function createEmptyData() {
+
         const data = {
-            version: STORAGE_VERSION,
+
+            version:
+                STORAGE_VERSION,
+
             activeExercises: {},
+
             goals: {},
+
             history: {},
-            lastUpdated: new Date().toISOString()
+
+            timers: {},
+
+            lastUpdated:
+                new Date().toISOString()
+
         };
 
+
         gyakorlatokDef.forEach(g => {
-            data.history[g.id] = {};
-            data.goals[g.id] = g.defaultGoal;
+
+            data.activeExercises[g.id] =
+                true;
+
+            data.goals[g.id] =
+                g.defaultGoal;
+
+            data.history[g.id] =
+                {};
+
         });
+
 
         return data;
     }
 
+
     function saveData(data) {
-        data.version = STORAGE_VERSION;
-        data.lastUpdated = new Date().toISOString();
 
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        } catch (error) {
-            alert('Nem sikerült elmenteni az adatokat. Lehet, hogy megtelt a böngésző tárhelye.');
-            console.error(error);
-        }
+        data.lastUpdated =
+            new Date().toISOString();
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(data)
+        );
     }
 
-    function loadData() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-
-            if (raw) {
-                const parsed = JSON.parse(raw);
-
-                if (parsed && typeof parsed === 'object') {
-                    return normalizeData(parsed);
-                }
-            }
-        } catch (error) {
-            console.warn('A Szamlalo v2 adatai sérültek, új adatstruktúra készül.', error);
-        }
-
-        return migrateOldData();
-    }
 
     function normalizeData(data) {
-        const clean = createEmptyData();
 
-        if (data.activeExercises && typeof data.activeExercises === 'object') {
-            clean.activeExercises = data.activeExercises;
-        }
+        const clean =
+            createEmptyData();
 
-        if (data.goals && typeof data.goals === 'object') {
-            Object.keys(data.goals).forEach(id => {
-                const value = Number(data.goals[id]);
 
-                if (Number.isFinite(value) && value > 0) {
-                    clean.goals[id] = Math.round(value);
-                }
-            });
-        }
+        if (
+            data &&
+            typeof data === 'object'
+        ) {
 
-        if (data.history && typeof data.history === 'object') {
-            Object.keys(clean.history).forEach(id => {
-                if (
-                    data.history[id] &&
-                    typeof data.history[id] === 'object'
-                ) {
-                    Object.keys(data.history[id]).forEach(date => {
-                        const value = Number(data.history[id][date]);
+            if (
+                data.activeExercises &&
+                typeof data.activeExercises === 'object'
+            ) {
 
-                        if (Number.isFinite(value) && value >= 0) {
-                            clean.history[id][date] = value;
+                Object.assign(
+                    clean.activeExercises,
+                    data.activeExercises
+                );
+
+            }
+
+
+            if (
+                data.goals &&
+                typeof data.goals === 'object'
+            ) {
+
+                Object.keys(
+                    data.goals
+                ).forEach(key => {
+
+                    const value =
+                        Number(
+                            data.goals[key]
+                        );
+
+                    if (
+                        Number.isFinite(value) &&
+                        value > 0
+                    ) {
+
+                        clean.goals[key] =
+                            value;
+
+                    }
+
+                });
+
+            }
+
+
+            if (
+                data.history &&
+                typeof data.history === 'object'
+            ) {
+
+                Object.keys(
+                    data.history
+                ).forEach(id => {
+
+                    if (
+                        !data.history[id] ||
+                        typeof data.history[id] !== 'object'
+                    ) {
+
+                        return;
+
+                    }
+
+                    clean.history[id] =
+                        {};
+
+                    Object.keys(
+                        data.history[id]
+                    ).forEach(date => {
+
+                        const value =
+                            Number(
+                                data.history[id][date]
+                            );
+
+                        if (
+                            Number.isFinite(value) &&
+                            value >= 0
+                        ) {
+
+                            clean.history[id][date] =
+                                value;
+
                         }
+
                     });
-                }
-            });
+
+                });
+
+            }
+
+
+            /* ----------------------------------------------------
+               STOPPEREK
+               ---------------------------------------------------- */
+
+            if (
+                data.timers &&
+                typeof data.timers === 'object'
+            ) {
+
+                Object.keys(
+                    data.timers
+                ).forEach(id => {
+
+                    const timer =
+                        data.timers[id];
+
+                    if (
+                        !timer ||
+                        typeof timer !== 'object'
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const elapsed =
+                        Number(
+                            timer.elapsed
+                        ) || 0;
+
+                    const startedAt =
+                        Number(
+                            timer.startedAt
+                        ) || 0;
+
+                    const running =
+                        timer.running === true;
+
+
+                    clean.timers[id] = {
+
+                        elapsed:
+                            Math.max(
+                                0,
+                                elapsed
+                            ),
+
+                        startedAt:
+                            running &&
+                            startedAt > 0
+                                ? startedAt
+                                : 0,
+
+                        running
+
+                    };
+
+                });
+
+            }
+
         }
+
 
         return clean;
     }
 
-    /*
-     * A régi alkalmazásból automatikusan átvesszük:
-     *
-     * history_fekvo
-     * history_felules
-     * ...
-     *
-     * cel_fekvo_2026-09-08
-     * active_ex_2026-09-08
-     */
-    function migrateOldData() {
-        const data = createEmptyData();
-        let foundOldData = false;
 
-        gyakorlatokDef.forEach(g => {
+    function migrateOldData() {
+
+        const existing =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+
+        if (existing) {
 
             try {
-                const oldHistory = localStorage.getItem('history_' + g.id);
 
-                if (oldHistory) {
-                    const parsed = JSON.parse(oldHistory);
+                return normalizeData(
+                    JSON.parse(existing)
+                );
 
-                    if (parsed && typeof parsed === 'object') {
-                        Object.keys(parsed).forEach(date => {
-                            const value = Number(parsed[date]);
-
-                            if (Number.isFinite(value) && value >= 0) {
-                                data.history[g.id][date] = value;
-                                foundOldData = true;
-                            }
-                        });
-                    }
-                }
             } catch (error) {
-                console.warn('Régi előzmény nem olvasható:', g.id, error);
+
+                console.warn(
+                    'Hibás új adat:',
+                    error
+                );
+
             }
 
-            /*
-             * A régi alkalmazásban lehetett:
-             * cel_id
-             * cel_id_datum
-             */
-            const defaultGoal = localStorage.getItem('cel_' + g.id);
-
-            if (defaultGoal !== null) {
-                const value = Number(defaultGoal);
-
-                if (Number.isFinite(value) && value > 0) {
-                    data.goals[g.id] = Math.round(value);
-                    foundOldData = true;
-                }
-            }
-        });
-
-        /*
-         * Régi napi aktív gyakorlatok átvétele.
-         */
-        const possibleDates = [];
-
-        const today = getTodayString();
-        possibleDates.push(today);
-
-        for (let i = 1; i <= 365; i++) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-
-            possibleDates.push(`${y}-${m}-${d}`);
         }
 
-        possibleDates.forEach(date => {
-            try {
-                const raw = localStorage.getItem('active_ex_' + date);
 
-                if (raw) {
-                    const list = JSON.parse(raw);
+        const data =
+            createEmptyData();
 
-                    if (Array.isArray(list)) {
-                        data.activeExercises[date] = list.filter(id =>
-                            gyakorlatokDef.some(g => g.id === id)
-                        );
+        let foundOldData =
+            false;
 
-                        foundOldData = true;
-                    }
-                }
-            } catch (error) {
-                console.warn('Régi aktívlista nem olvasható:', date, error);
-            }
-        });
 
-        /*
-         * Régi napi célok átvétele az előzmények dátumai alapján.
-         */
         gyakorlatokDef.forEach(g => {
-            Object.keys(data.history[g.id]).forEach(date => {
-                const oldGoal = localStorage.getItem(`cel_${g.id}_${date}`);
 
-                if (oldGoal !== null) {
-                    const value = Number(oldGoal);
+            const oldHistory =
+                localStorage.getItem(
+                    'history_' + g.id
+                );
 
-                    if (Number.isFinite(value) && value > 0) {
-                        /*
-                         * Az új rendszerben napi célként tároljuk.
-                         */
-                        if (!data.goals[g.id + '_' + date]) {
-                            data.goals[g.id + '_' + date] = Math.round(value);
-                        }
 
-                        foundOldData = true;
+            if (oldHistory) {
+
+                try {
+
+                    const parsed =
+                        JSON.parse(oldHistory);
+
+                    if (
+                        parsed &&
+                        typeof parsed === 'object'
+                    ) {
+
+                        data.history[g.id] =
+                            parsed;
+
+                        foundOldData =
+                            true;
+
                     }
+
+                } catch (error) {
+
+                    console.warn(
+                        'Régi előzmény hiba:',
+                        error
+                    );
+
                 }
-            });
+
+            }
+
+
+            const oldGoal =
+                localStorage.getItem(
+                    'cel_' + g.id
+                );
+
+
+            if (oldGoal !== null) {
+
+                const goal =
+                    Number(oldGoal);
+
+                if (
+                    Number.isFinite(goal) &&
+                    goal > 0
+                ) {
+
+                    data.goals[g.id] =
+                        goal;
+
+                    foundOldData =
+                        true;
+
+                }
+
+            }
+
         });
 
-        saveData(data);
+
+        const today =
+            getTodayString();
+
+
+        for (
+            let i = 0;
+            i < 365;
+            i++
+        ) {
+
+            const date =
+                new Date();
+
+            date.setDate(
+                date.getDate() - i
+            );
+
+            const dateString =
+                dateToString(date);
+
+
+            const active =
+                localStorage.getItem(
+                    'active_ex_' +
+                    dateString
+                );
+
+
+            if (active) {
+
+                try {
+
+                    const parsed =
+                        JSON.parse(active);
+
+                    if (
+                        parsed &&
+                        typeof parsed === 'object'
+                    ) {
+
+                        Object.keys(parsed)
+                            .forEach(id => {
+
+                                if (
+                                    parsed[id] === true
+                                ) {
+
+                                    data.activeExercises[id] =
+                                        true;
+
+                                }
+
+                            });
+
+                        foundOldData =
+                            true;
+
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        'Régi aktív gyakorlat hiba:',
+                        error
+                    );
+
+                }
+
+            }
+
+
+            gyakorlatokDef.forEach(g => {
+
+                const oldGoal =
+                    localStorage.getItem(
+                        'cel_' +
+                        g.id +
+                        '_' +
+                        dateString
+                    );
+
+
+                if (
+                    oldGoal !== null
+                ) {
+
+                    const goal =
+                        Number(oldGoal);
+
+                    if (
+                        Number.isFinite(goal) &&
+                        goal > 0
+                    ) {
+
+                        data.goals[
+                            g.id + '_' +
+                            dateString
+                        ] = goal;
+
+                        foundOldData =
+                            true;
+
+                    }
+
+                }
+
+            });
+
+        }
+
 
         if (foundOldData) {
-            console.info('A régi Szamlalo adatok sikeresen át lettek emelve.');
+
+            saveData(data);
+
         }
+
 
         return data;
     }
 
 
-    function getActiveExercises(data, date) {
-        if (
-            data.activeExercises &&
-            Array.isArray(data.activeExercises[date])
-        ) {
-            return data.activeExercises[date];
-        }
+    function loadData() {
 
-        return [];
-    }
+        const data =
+            migrateOldData();
 
-    function getGoal(data, id, date) {
-        const dailyKey = id + '_' + date;
-
-        if (
-            data.goals &&
-            Number.isFinite(Number(data.goals[dailyKey])) &&
-            Number(data.goals[dailyKey]) > 0
-        ) {
-            return Number(data.goals[dailyKey]);
-        }
-
-        if (
-            data.goals &&
-            Number.isFinite(Number(data.goals[id])) &&
-            Number(data.goals[id]) > 0
-        ) {
-            return Number(data.goals[id]);
-        }
-
-        const g = gyakorlatokDef.find(x => x.id === id);
-
-        return g ? g.defaultGoal : 100;
+        return normalizeData(data);
     }
 
 
     /* ============================================================
-       SEGÉDFÜGGVÉNYEK
+       GYAKORLATOK
        ============================================================ */
 
-    function getHistory(data, id) {
-        if (!data.history[id]) {
-            data.history[id] = {};
+    function getActiveExercises(data) {
+
+        return gyakorlatokDef.filter(
+            g =>
+                data.activeExercises[g.id] !== false
+        );
+    }
+
+
+    function getGoal(
+        data,
+        id,
+        date
+    ) {
+
+        const specific =
+            data.goals[
+                id + '_' + date
+            ];
+
+
+        if (
+            Number.isFinite(
+                Number(specific)
+            ) &&
+            Number(specific) > 0
+        ) {
+
+            return Number(specific);
+
+        }
+
+
+        return (
+            Number(data.goals[id]) ||
+            gyakorlatokDef.find(
+                g => g.id === id
+            )?.defaultGoal ||
+            1
+        );
+    }
+
+
+    function getHistory(
+        data,
+        id
+    ) {
+
+        if (
+            !data.history[id]
+        ) {
+
+            data.history[id] =
+                {};
+
         }
 
         return data.history[id];
     }
 
-    function getTodayValue(data, id, date = getTodayString()) {
-        const history = getHistory(data, id);
 
-        return Number(history[date]) || 0;
-    }
+    function getTodayValue(
+        data,
+        id
+    ) {
 
-    function formatValue(g, value) {
-        return g.type === 'sec'
-            ? formatTime(value)
-            : `${value} db`;
-    }
+        const history =
+            getHistory(
+                data,
+                id
+            );
 
-    function formatGoal(g, goal) {
-        return g.type === 'sec'
-            ? formatTime(goal)
-            : `${goal} db`;
-    }
-
-    function clamp(value, min, max) {
-        return Math.min(Math.max(value, min), max);
+        return (
+            Number(
+                history[getTodayString()]
+            ) || 0
+        );
     }
 
 
     /* ============================================================
-       GYAKORLAT VÁLASZTÓ
+       PICKER
        ============================================================ */
 
     function initPicker() {
-        const data = loadData();
-        const today = getTodayString();
-        const activeList = getActiveExercises(data, today);
 
-        const container = document.getElementById('picker-container');
+        const data =
+            loadData();
 
-        let html = '';
+        const picker =
+            document.getElementById(
+                'picker'
+            );
 
-        gyakorlatokDef.forEach(g => {
 
-            const checked = activeList.includes(g.id)
-                ? 'checked'
-                : '';
+        picker.innerHTML =
+            gyakorlatokDef.map(g => {
 
-            html += `
-                <div class="picker-row">
+                const active =
+                    data.activeExercises[g.id] !== false;
 
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="${g.id}"
-                            ${checked}
-                            onchange="valasztasValtozott()"
+
+                return `
+
+                    <div class="picker-row">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                ${active ? 'checked' : ''}
+                                onchange="
+                                    toggleExercise(
+                                        '${g.id}',
+                                        this.checked
+                                    )
+                                "
+                            >
+
+                            <span>
+                                ${g.name}
+                            </span>
+
+                        </label>
+
+
+                        <button
+                            onclick="
+                                modositMaiCelt(
+                                    '${g.id}'
+                                )
+                            "
                         >
+                            🎯 Cél
+                        </button>
 
-                        <span>${g.name}</span>
-                    </label>
+                    </div>
 
-                    <button
-                        onclick="nyitTeljesElozmeny('${g.id}')"
-                    >
-                        📅 Előzmények
-                    </button>
+                `;
 
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
+            }).join('');
     }
 
 
-    function valasztasValtozott() {
-        const data = loadData();
-        const today = getTodayString();
+    function toggleExercise(
+        id,
+        active
+    ) {
 
-        const checkboxes = document.querySelectorAll(
-            '#picker-container input[type="checkbox"]'
-        );
+        const data =
+            loadData();
 
-        const selected = [];
-
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                selected.push(cb.value);
-            }
-        });
-
-        data.activeExercises[today] = selected;
+        data.activeExercises[id] =
+            active;
 
         saveData(data);
 
@@ -1101,29 +2397,76 @@
        CÉLOK
        ============================================================ */
 
-    function mentiCelt(id) {
-        const data = loadData();
-        const today = getTodayString();
+    function modositMaiCelt(id) {
 
-        const input = document.getElementById('setup_cel_' + id);
+        const data =
+            loadData();
 
-        if (!input) return;
+        const g =
+            gyakorlatokDef.find(
+                x => x.id === id
+            );
 
-        const value = Number(input.value);
-
-        if (!Number.isFinite(value) || value <= 0) {
-            alert('Adj meg egy 0-nál nagyobb célt!');
+        if (!g) {
             return;
         }
 
-        data.goals[id + '_' + today] = Math.round(value);
 
-        /*
-         * Ha még nincs alapértelmezett cél, azt is beállítjuk.
-         */
-        if (!data.goals[id]) {
-            data.goals[id] = Math.round(value);
+        const today =
+            getTodayString();
+
+        const current =
+            getGoal(
+                data,
+                id,
+                today
+            );
+
+
+        const value =
+            prompt(
+                `Mai cél – ${g.name}\n\n` +
+                `Jelenlegi cél: ` +
+                formatGoal(
+                    current,
+                    g.type
+                ) +
+                `\n\n` +
+                `Add meg az új célt:`,
+                String(current)
+            );
+
+
+        if (
+            value === null
+        ) {
+
+            return;
+
         }
+
+
+        const newGoal =
+            Number(value);
+
+
+        if (
+            !Number.isFinite(newGoal) ||
+            newGoal <= 0
+        ) {
+
+            alert(
+                'Érvényes, nullánál nagyobb számot adj meg.'
+            );
+
+            return;
+
+        }
+
+
+        data.goals[
+            id + '_' + today
+        ] = newGoal;
 
         saveData(data);
 
@@ -1131,21 +2474,41 @@
     }
 
 
-    function modositMaiCelt(id, value) {
-        const data = loadData();
-        const today = getTodayString();
+    function mentiCelt(
+        id,
+        input
+    ) {
 
-        const goal = Number(value);
+        const value =
+            Number(
+                input.value
+            );
 
-        if (!Number.isFinite(goal) || goal <= 0) {
-            alert('A célértéknek 0-nál nagyobbnak kell lennie.');
-            renderApp();
+
+        if (
+            !Number.isFinite(value) ||
+            value <= 0
+        ) {
+
             return;
+
         }
 
-        data.goals[id + '_' + today] = Math.round(goal);
+
+        const data =
+            loadData();
+
+        const today =
+            getTodayString();
+
+
+        data.goals[
+            id + '_' + today
+        ] = value;
+
 
         saveData(data);
+
         renderApp();
     }
 
@@ -1154,172 +2517,720 @@
        HOZZÁADÁS
        ============================================================ */
 
-    function hozzaad(id, mennyiseg) {
-        const data = loadData();
-        const today = getTodayString();
+    function hozzaad(
+        id,
+        amount
+    ) {
 
-        const amount = Number(mennyiseg);
+        amount =
+            Number(amount);
 
-        if (!Number.isFinite(amount) || amount <= 0) {
+
+        if (
+            !Number.isFinite(amount) ||
+            amount <= 0
+        ) {
+
             return;
+
         }
 
-        const history = getHistory(data, id);
 
-        const regiErtek = Number(history[today]) || 0;
-        const ujErtek = regiErtek + amount;
+        const data =
+            loadData();
 
-        history[today] = ujErtek;
+        const today =
+            getTodayString();
 
-        const cel = getGoal(data, id, today);
+        const history =
+            getHistory(
+                data,
+                id
+            );
+
+        const regiErtek =
+            Number(
+                history[today]
+            ) || 0;
+
+        const ujErtek =
+            regiErtek + amount;
+
+
+        history[today] =
+            ujErtek;
+
 
         saveData(data);
 
-        /*
-         * Az utolsó műveletet megjegyezzük,
-         * így egy kattintással visszavonható.
-         */
+
         utolsoMuvelet = {
+
             id,
             amount,
-            previousValue: regiErtek,
-            newValue: ujErtek,
-            date: today
+            previousValue:
+                regiErtek,
+
+            newValue:
+                ujErtek,
+
+            date:
+                today
+
         };
 
-        if (regiErtek < cel && ujErtek >= cel) {
+
+        const cel =
+            getGoal(
+                data,
+                id,
+                today
+            );
+
+
+        if (
+            regiErtek < cel &&
+            ujErtek >= cel
+        ) {
+
             mutatPopup();
+
         }
+
 
         renderApp();
     }
 
 
-    function egyediHozzaad(id, type) {
-        const input = document.getElementById('custom_' + id);
+    function egyediHozzaad(id) {
 
-        if (!input) return;
+        const input =
+            document.getElementById(
+                'custom_' + id
+            );
 
-        const value = Number(input.value);
 
-        if (!Number.isFinite(value) || value <= 0) {
+        if (!input) {
             return;
         }
 
-        let amount = value;
 
-        if (type === 'sec') {
-            const unit = document.getElementById('unit_' + id);
+        const value =
+            Number(
+                input.value
+            );
 
-            if (unit && unit.value === 'perc') {
-                amount = value * 60;
-            }
+
+        if (
+            !Number.isFinite(value) ||
+            value <= 0
+        ) {
+
+            return;
+
         }
 
-        hozzaad(id, amount);
+
+        hozzaad(
+            id,
+            value
+        );
+
+
+        input.value =
+            '';
     }
 
 
-    /* ============================================================
-       VISSZAVONÁS
-       ============================================================ */
-
     function visszavon() {
-        if (!utolsoMuvelet) {
+
+        if (
+            !utolsoMuvelet
+        ) {
+
             return;
+
         }
 
-        const today = getTodayString();
 
-        if (utolsoMuvelet.date !== today) {
-            utolsoMuvelet = null;
+        const data =
+            loadData();
+
+        const operation =
+            utolsoMuvelet;
+
+
+        if (
+            operation.date !==
+            getTodayString()
+        ) {
+
+            utolsoMuvelet =
+                null;
+
             renderApp();
+
             return;
+
         }
 
-        const data = loadData();
-        const history = getHistory(data, utolsoMuvelet.id);
 
-        history[today] = Math.max(
-            0,
-            Number(utolsoMuvelet.previousValue) || 0
-        );
+        const history =
+            getHistory(
+                data,
+                operation.id
+            );
+
+
+        const current =
+            Number(
+                history[operation.date]
+            ) || 0;
+
+
+        if (
+            current !==
+            operation.newValue
+        ) {
+
+            utolsoMuvelet =
+                null;
+
+            renderApp();
+
+            return;
+
+        }
+
+
+        history[operation.date] =
+            Math.max(
+                0,
+                operation.previousValue
+            );
+
 
         saveData(data);
 
-        utolsoMuvelet = null;
+        utolsoMuvelet =
+            null;
 
         renderApp();
     }
 
 
     /* ============================================================
-       NAPI ÖSSZESÍTŐ
+       STOPPER
        ============================================================ */
 
-    function renderDailySummary(data) {
-        const today = getTodayString();
-        const activeList = getActiveExercises(data, today);
+    function getTimerElapsed(
+        data,
+        id
+    ) {
 
-        const container = document.getElementById('daily-summary');
+        const timer =
+            data.timers[id];
 
-        if (activeList.length === 0) {
-            container.innerHTML = '';
-            return;
+
+        if (!timer) {
+            return 0;
         }
 
-        let completed = 0;
 
-        activeList.forEach(id => {
-            const value = getTodayValue(data, id, today);
-            const goal = getGoal(data, id, today);
+        let elapsed =
+            Number(
+                timer.elapsed
+            ) || 0;
 
-            if (value >= goal) {
-                completed++;
-            }
-        });
 
-        const percentage = Math.round(
-            (completed / activeList.length) * 100
+        if (
+            timer.running === true &&
+            Number(timer.startedAt) > 0
+        ) {
+
+            elapsed +=
+                (
+                    Date.now() -
+                    Number(timer.startedAt)
+                ) / 1000;
+
+        }
+
+
+        return Math.max(
+            0,
+            Math.floor(elapsed)
         );
+    }
 
-        const streak = calculateStreak(data);
 
-        container.innerHTML = `
-            <div class="card">
+    function formatStopwatchTime(
+        seconds
+    ) {
 
-                <div class="card-header">
-                    <h2 class="card-title">📊 Mai összesítés</h2>
+        seconds =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(seconds) || 0
+                )
+            );
 
-                    <strong>${completed}/${activeList.length}</strong>
-                </div>
 
-                <div class="progress-wrapper">
-                    <div
-                        class="progress-bar"
-                        style="width:${percentage}%; background:#2563eb;"
-                    ></div>
-                </div>
+        const hours =
+            Math.floor(
+                seconds / 3600
+            );
 
-                <div class="progress-text">
-                    ${percentage}% teljesítve
-                </div>
 
-                <p class="streak">
-                    🔥 Jelenlegi sorozat:
-                    <strong>${streak} nap</strong>
-                </p>
+        const minutes =
+            Math.floor(
+                (seconds % 3600) / 60
+            );
 
-                ${
-                    completed === activeList.length
-                        ? `<div class="success-message" style="text-align:center; margin-top:8px;">
-                            🎉 Minden mai cél teljesítve!
-                           </div>`
-                        : ''
+
+        const secs =
+            seconds % 60;
+
+
+        return [
+
+            String(hours)
+                .padStart(2, '0'),
+
+            String(minutes)
+                .padStart(2, '0'),
+
+            String(secs)
+                .padStart(2, '0')
+
+        ].join(':');
+    }
+
+
+    function stopperIndit(id) {
+
+        const data =
+            loadData();
+
+
+        if (!data.timers) {
+
+            data.timers =
+                {};
+
+        }
+
+
+        const timer =
+            data.timers[id] || {
+
+                elapsed:
+                    0,
+
+                startedAt:
+                    0,
+
+                running:
+                    false
+
+            };
+
+
+        if (
+            timer.running
+        ) {
+
+            return;
+
+        }
+
+
+        timer.startedAt =
+            Date.now();
+
+        timer.running =
+            true;
+
+
+        data.timers[id] =
+            timer;
+
+
+        saveData(data);
+
+        startStopperFrissites();
+
+        renderApp();
+    }
+
+
+    function stopperSzünet(id) {
+
+        const data =
+            loadData();
+
+
+        if (
+            !data.timers ||
+            !data.timers[id]
+        ) {
+
+            return;
+
+        }
+
+
+        const timer =
+            data.timers[id];
+
+
+        if (
+            !timer.running
+        ) {
+
+            return;
+
+        }
+
+
+        timer.elapsed =
+            getTimerElapsed(
+                data,
+                id
+            );
+
+        timer.startedAt =
+            0;
+
+        timer.running =
+            false;
+
+
+        data.timers[id] =
+            timer;
+
+
+        saveData(data);
+
+
+        /*
+         * Csak akkor állítjuk le a frissítést,
+         * ha már egyetlen stopper sem fut.
+         */
+
+        if (
+            !vanFutoStopper(data)
+        ) {
+
+            stopStopperFrissites();
+
+        }
+
+
+        renderApp();
+    }
+
+
+    function stopperNullaz(id) {
+
+        const data =
+            loadData();
+
+
+        if (!data.timers) {
+
+            data.timers =
+                {};
+
+        }
+
+
+        data.timers[id] = {
+
+            elapsed:
+                0,
+
+            startedAt:
+                0,
+
+            running:
+                false
+
+        };
+
+
+        saveData(data);
+
+
+        if (
+            !vanFutoStopper(data)
+        ) {
+
+            stopStopperFrissites();
+
+        }
+
+
+        renderApp();
+    }
+
+
+    function stopperBefejez(id) {
+
+        const data =
+            loadData();
+
+
+        if (
+            !data.timers ||
+            !data.timers[id]
+        ) {
+
+            return;
+
+        }
+
+
+        const elapsed =
+            getTimerElapsed(
+                data,
+                id
+            );
+
+
+        if (
+            elapsed <= 0
+        ) {
+
+            alert(
+                'A stopper még nem mért időt.'
+            );
+
+            return;
+
+        }
+
+
+        const today =
+            getTodayString();
+
+
+        const history =
+            getHistory(
+                data,
+                id
+            );
+
+
+        const regiErtek =
+            Number(
+                history[today]
+            ) || 0;
+
+
+        const ujErtek =
+            regiErtek + elapsed;
+
+
+        history[today] =
+            ujErtek;
+
+
+        /*
+         * A stopper nullázódik,
+         * miután az időt hozzáadtuk
+         * a napi eredményhez.
+         */
+
+        data.timers[id] = {
+
+            elapsed:
+                0,
+
+            startedAt:
+                0,
+
+            running:
+                false
+
+        };
+
+
+        const cel =
+            getGoal(
+                data,
+                id,
+                today
+            );
+
+
+        saveData(data);
+
+
+        utolsoMuvelet = {
+
+            id,
+
+            amount:
+                elapsed,
+
+            previousValue:
+                regiErtek,
+
+            newValue:
+                ujErtek,
+
+            date:
+                today
+
+        };
+
+
+        /*
+         * Ha több stopper fut,
+         * a másik továbbra is fusson.
+         */
+
+        if (
+            !vanFutoStopper(data)
+        ) {
+
+            stopStopperFrissites();
+
+        }
+
+
+        if (
+            regiErtek < cel &&
+            ujErtek >= cel
+        ) {
+
+            mutatPopup();
+
+        }
+
+
+        renderApp();
+    }
+
+
+    function vanFutoStopper(data) {
+
+        if (
+            !data.timers
+        ) {
+
+            return false;
+
+        }
+
+
+        return Object.values(
+            data.timers
+        ).some(
+            timer =>
+                timer &&
+                timer.running === true
+        );
+    }
+
+
+    function startStopperFrissites() {
+
+        if (
+            stopperInterval !== null
+        ) {
+
+            return;
+
+        }
+
+
+        stopperInterval =
+            setInterval(
+                frissitStopperKijelzok,
+                250
+            );
+
+
+        frissitStopperKijelzok();
+    }
+
+
+    function stopStopperFrissites() {
+
+        if (
+            stopperInterval !== null
+        ) {
+
+            clearInterval(
+                stopperInterval
+            );
+
+            stopperInterval =
+                null;
+        }
+    }
+
+
+    function frissitStopperKijelzok() {
+
+        const data =
+            loadData();
+
+
+        if (
+            !vanFutoStopper(data)
+        ) {
+
+            stopStopperFrissites();
+
+            return;
+
+        }
+
+
+        gyakorlatokDef.forEach(
+            g => {
+
+                if (
+                    g.type !== 'sec'
+                ) {
+
+                    return;
+
                 }
 
-            </div>
-        `;
+
+                const display =
+                    document.getElementById(
+                        'stopwatch_display_' +
+                        g.id
+                    );
+
+
+                if (!display) {
+
+                    return;
+
+                }
+
+
+                const elapsed =
+                    getTimerElapsed(
+                        data,
+                        g.id
+                    );
+
+
+                display.innerText =
+                    formatStopwatchTime(
+                        elapsed
+                    );
+
+            }
+        );
     }
 
 
@@ -1327,480 +3238,1133 @@
        STATISZTIKÁK
        ============================================================ */
 
-    function calculateWeeklyTotal(data, id) {
-        const today = dateFromString(getTodayString());
+    function calculateWeeklyTotal(
+        data,
+        id
+    ) {
 
         let total = 0;
 
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(today);
+        const today =
+            dateFromString(
+                getTodayString()
+            );
 
-            date.setDate(today.getDate() - i);
 
-            const dateString = dateToString(date);
+        for (
+            let i = 0;
+            i < 7;
+            i++
+        ) {
 
-            total += getTodayValue(data, id, dateString);
+            const date =
+                new Date(today);
+
+            date.setDate(
+                date.getDate() - i
+            );
+
+
+            const key =
+                dateToString(date);
+
+
+            total +=
+                Number(
+                    getHistory(
+                        data,
+                        id
+                    )[key]
+                ) || 0;
+
         }
+
 
         return total;
     }
 
 
-    function calculateRecord(data, id) {
-        const history = getHistory(data, id);
+    function calculateRecord(
+        data,
+        id
+    ) {
 
-        const values = Object.values(history)
-            .map(Number)
-            .filter(value => Number.isFinite(value) && value >= 0);
+        const history =
+            getHistory(
+                data,
+                id
+            );
 
-        if (values.length === 0) {
+
+        const values =
+            Object.values(
+                history
+            ).map(
+                Number
+            );
+
+
+        if (
+            values.length === 0
+        ) {
+
             return 0;
+
         }
 
-        return Math.max(...values);
-    }
 
-
-    function calculateAverage(data, id) {
-        const history = getHistory(data, id);
-
-        const values = Object.values(history)
-            .map(Number)
-            .filter(value => Number.isFinite(value) && value > 0);
-
-        if (values.length === 0) {
-            return 0;
-        }
-
-        return Math.round(
-            values.reduce((sum, value) => sum + value, 0) / values.length
+        return Math.max(
+            ...values,
+            0
         );
     }
 
 
-    function calculateStreak(data) {
-        const dates = new Set();
+    function calculateAverage(
+        data,
+        id
+    ) {
 
-        gyakorlatokDef.forEach(g => {
-            const history = getHistory(data, g.id);
+        const history =
+            getHistory(
+                data,
+                id
+            );
 
-            Object.keys(history).forEach(date => {
-                if (Number(history[date]) > 0) {
-                    dates.add(date);
-                }
-            });
-        });
 
-        let streak = 0;
+        const values =
+            Object.values(
+                history
+            )
+            .map(Number)
+            .filter(
+                value =>
+                    value > 0
+            );
 
-        const date = dateFromString(getTodayString());
 
-        /*
-         * Ha ma még nincs adat, tegnaptól is számíthatjuk
-         * a már meglévő sorozatot.
-         */
-        const todayString = getTodayString();
+        if (
+            values.length === 0
+        ) {
 
-        if (!dates.has(todayString)) {
-            date.setDate(date.getDate() - 1);
+            return 0;
+
         }
 
-        while (true) {
-            const current = dateToString(date);
 
-            if (!dates.has(current)) {
+        return (
+            values.reduce(
+                (a, b) =>
+                    a + b,
+                0
+            ) /
+            values.length
+        );
+    }
+
+
+    function calculateStreak(
+        data
+    ) {
+
+        let streak =
+            0;
+
+        const date =
+            dateFromString(
+                getTodayString()
+            );
+
+
+        while (true) {
+
+            const dateString =
+                dateToString(date);
+
+
+            let complete = true;
+
+
+            getActiveExercises(data)
+                .forEach(g => {
+
+                    const value =
+                        getHistory(
+                            data,
+                            g.id
+                        )[dateString] || 0;
+
+
+                    const goal =
+                        getGoal(
+                            data,
+                            g.id,
+                            dateString
+                        );
+
+
+                    if (
+                        Number(value) <
+                        Number(goal)
+                    ) {
+
+                        complete =
+                            false;
+
+                    }
+
+                });
+
+
+            if (!complete) {
+
                 break;
+
             }
+
 
             streak++;
 
-            date.setDate(date.getDate() - 1);
+            date.setDate(
+                date.getDate() - 1
+            );
+
+
+            if (
+                streak > 3650
+            ) {
+
+                break;
+
+            }
+
         }
+
 
         return streak;
     }
 
 
-    function dateToString(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+    /* ============================================================
+       NAPI ÖSSZESÍTŐ
+       ============================================================ */
 
-        return `${year}-${month}-${day}`;
+    function renderDailySummary() {
+
+        const data =
+            loadData();
+
+        const active =
+            getActiveExercises(data);
+
+        const today =
+            getTodayString();
+
+
+        let completed =
+            0;
+
+
+        active.forEach(g => {
+
+            const value =
+                getTodayValue(
+                    data,
+                    g.id
+                );
+
+            const goal =
+                getGoal(
+                    data,
+                    g.id,
+                    today
+                );
+
+
+            if (
+                value >= goal
+            ) {
+
+                completed++;
+
+            }
+
+        });
+
+
+        const streak =
+            calculateStreak(
+                data
+            );
+
+
+        const summary =
+            document.getElementById(
+                'daily-summary'
+            );
+
+
+        summary.innerHTML = `
+
+            <h3 class="section-title">
+                📅 Mai összesítés
+            </h3>
+
+            <div class="stats-grid">
+
+                <div class="stat">
+
+                    <span class="stat-value">
+                        ${completed}/${active.length}
+                    </span>
+
+                    <span class="stat-label">
+                        teljesített cél
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <span class="stat-value">
+                        ${streak} 🔥
+                    </span>
+
+                    <span class="stat-label">
+                        napos sorozat
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
     }
 
 
     /* ============================================================
-       KÁRTYÁK KIRAJZOLÁSA
+       FŐ RENDER
        ============================================================ */
 
     function renderApp() {
-        const data = loadData();
 
-        const today = getTodayString();
+        const data =
+            loadData();
 
-        const activeList = getActiveExercises(
-            data,
-            today
-        );
+        const today =
+            getTodayString();
 
-        const container = document.getElementById('cards-container');
+        const active =
+            getActiveExercises(data);
 
-        renderDailySummary(data);
 
-        if (activeList.length === 0) {
+        renderDailySummary();
 
-            container.innerHTML = `
+
+        const list =
+            document.getElementById(
+                'exercise-list'
+            );
+
+
+        if (
+            active.length === 0
+        ) {
+
+            list.innerHTML = `
+
                 <div class="card">
+
                     <div class="empty">
-                        Jelölj ki a fenti listából legalább egy
-                        gyakorlatot a kezdéshez! 💪
+
+                        Nincs kiválasztott gyakorlat.
+
+                        <br>
+
+                        Válassz legalább egyet
+                        a fenti listából.
+
                     </div>
+
                 </div>
+
             `;
 
-            initPicker();
-
             return;
+
         }
 
-        let html = '';
 
-        activeList.forEach(id => {
+        list.innerHTML =
+            active.map(g => {
 
-            const g = gyakorlatokDef.find(
-                x => x.id === id
-            );
+                const id =
+                    g.id;
 
-            if (!g) return;
 
-            const history = getHistory(data, id);
+                const value =
+                    getTodayValue(
+                        data,
+                        id
+                    );
 
-            const maiErtek = Number(
-                history[today]
-            ) || 0;
 
-            const cel = getGoal(
-                data,
-                id,
-                today
-            );
+                const goal =
+                    getGoal(
+                        data,
+                        id,
+                        today
+                    );
 
-            const szazalek = clamp(
-                Math.round((maiErtek / cel) * 100),
-                0,
-                100
-            );
 
-            const sortedDates = Object.keys(history)
-                .sort()
-                .reverse();
+                const percent =
+                    goal > 0
+                        ? clamp(
+                            (value / goal) * 100,
+                            0,
+                            100
+                        )
+                        : 0;
 
-            const last3 = sortedDates.slice(0, 3);
 
-            let histHtml = '';
+                const history =
+                    getHistory(
+                        data,
+                        id
+                    );
 
-            if (last3.length === 0) {
 
-                histHtml = `
-                    <div class="empty">
-                        Még nincs rögzített nap.
-                    </div>
-                `;
+                const recentDates =
+                    Object.keys(history)
+                        .filter(
+                            date =>
+                                Number(
+                                    history[date]
+                                ) > 0
+                        )
+                        .sort()
+                        .reverse()
+                        .slice(0, 5);
 
-            } else {
 
-                last3.forEach(date => {
+                const recentHtml =
+                    recentDates.length
+                        ? recentDates.map(
+                            date => `
 
-                    const value = history[date];
+                                <div class="history-row">
 
-                    histHtml += `
-                        <div class="history-row">
+                                    <span>
+                                        ${formatDate(date)}
+                                    </span>
 
-                            <span>
-                                ${
-                                    date === today
-                                        ? 'Ma'
-                                        : formatDate(date)
-                                }
-                            </span>
+                                    <strong>
+                                        ${formatValue(
+                                            history[date],
+                                            g.type
+                                        )}
+                                    </strong>
 
-                            <span>
-                                <b>
-                                    ${formatValue(g, value)}
-                                </b>
-                            </span>
+                                </div>
 
-                        </div>
-                    `;
-                });
-            }
+                            `
+                        ).join('')
+                        : `
+                            <div class="empty">
+                                Még nincs előzmény.
+                            </div>
+                        `;
 
-            let gombokHtml = '';
-            let egyediBoxHtml = '';
 
-            if (g.type === 'sec') {
+                /* ------------------------------------------------
+                   NORMÁL HOZZÁADÓ GOMBOK
+                   ------------------------------------------------ */
 
-                gombokHtml = `
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',30)"
-                    >
-                        +30mp
-                    </button>
+                let buttonsHtml = '';
 
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',60)"
-                    >
-                        +1p
-                    </button>
 
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',300)"
-                    >
-                        +5p
-                    </button>
-                `;
+                if (
+                    g.type === 'sec'
+                ) {
 
-                egyediBoxHtml = `
-                    <div class="custom-add-box">
+                    buttonsHtml = `
 
-                        <input
-                            type="number"
-                            min="1"
-                            step="1"
-                            id="custom_${id}"
-                            placeholder="Egyedi"
-                            onkeydown="handleEnter(event,'${id}','sec')"
-                        >
+                        <div class="btn-group">
 
-                        <select id="unit_${id}">
-                            <option value="mp">mp</option>
-                            <option value="perc">perc</option>
-                        </select>
-
-                        <button
-                            onclick="egyediHozzaad('${id}','sec')"
-                        >
-                            Hozzáad
-                        </button>
-
-                    </div>
-                `;
-
-            } else {
-
-                gombokHtml = `
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',10)"
-                    >
-                        +10
-                    </button>
-
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',20)"
-                    >
-                        +20
-                    </button>
-
-                    <button
-                        class="btn-plus"
-                        onclick="hozzaad('${id}',50)"
-                    >
-                        +50
-                    </button>
-                `;
-
-                egyediBoxHtml = `
-                    <div class="custom-add-box">
-
-                        <input
-                            type="number"
-                            min="1"
-                            step="1"
-                            id="custom_${id}"
-                            placeholder="Egyedi"
-                            onkeydown="handleEnter(event,'${id}','db')"
-                        >
-
-                        <button
-                            onclick="egyediHozzaad('${id}','db')"
-                        >
-                            Hozzáad
-                        </button>
-
-                    </div>
-                `;
-            }
-
-            const maiKijelzes = formatValue(
-                g,
-                maiErtek
-            );
-
-            const celKijelzes = formatGoal(
-                g,
-                cel
-            );
-
-            html += `
-                <div class="card ${g.color}">
-
-                    <div class="card-header">
-
-                        <h2 class="card-title">
-                            ${g.name}
-                        </h2>
-
-                        <div class="target-box">
-
-                            Cél:
-
-                            <input
-                                type="number"
-                                min="1"
-                                value="${cel}"
-                                onchange="
-                                    modositMaiCelt(
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
                                         '${id}',
-                                        this.value
+                                        30
                                     )
                                 "
                             >
+                                +30 mp
+                            </button>
 
-                            ${g.type === 'sec' ? 'mp' : 'db'}
+
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
+                                        '${id}',
+                                        60
+                                    )
+                                "
+                            >
+                                +1 perc
+                            </button>
+
+
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
+                                        '${id}',
+                                        300
+                                    )
+                                "
+                            >
+                                +5 perc
+                            </button>
 
                         </div>
 
+                    `;
+
+                } else {
+
+                    buttonsHtml = `
+
+                        <div class="btn-group">
+
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
+                                        '${id}',
+                                        10
+                                    )
+                                "
+                            >
+                                +10
+                            </button>
+
+
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
+                                        '${id}',
+                                        20
+                                    )
+                                "
+                            >
+                                +20
+                            </button>
+
+
+                            <button
+                                class="btn-plus"
+                                style="
+                                    background:${g.color};
+                                "
+                                onclick="
+                                    hozzaad(
+                                        '${id}',
+                                        50
+                                    )
+                                "
+                            >
+                                +50
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /* ------------------------------------------------
+                   EGYEDI ÉRTÉK
+                   ------------------------------------------------ */
+
+                const egyediBoxHtml = `
+
+                    <div class="custom-add-box">
+
+                        <input
+                            id="custom_${id}"
+                            type="number"
+                            min="1"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="Egyedi érték"
+                            onkeydown="
+                                handleEnter(
+                                    event,
+                                    '${id}'
+                                )
+                            "
+                        >
+
+
+                        <button
+                            onclick="
+                                egyediHozzaad(
+                                    '${id}'
+                                )
+                            "
+                        >
+                            + Hozzáad
+                        </button>
+
                     </div>
 
-                    <div class="progress-wrapper">
+                `;
+
+
+                /* ------------------------------------------------
+                   STOPPER
+                   ------------------------------------------------ */
+
+                let stopperHtml = '';
+
+
+                if (
+                    g.type === 'sec'
+                ) {
+
+                    const timer =
+                        data.timers[id] || {
+
+                            elapsed:
+                                0,
+
+                            startedAt:
+                                0,
+
+                            running:
+                                false
+
+                        };
+
+
+                    const timerElapsed =
+                        getTimerElapsed(
+                            data,
+                            id
+                        );
+
+
+                    const timerDisplay =
+                        formatStopwatchTime(
+                            timerElapsed
+                        );
+
+
+                    if (
+                        timer.running
+                    ) {
+
+                        stopperHtml = `
+
+                            <div
+                                class="stopwatch running"
+                            >
+
+                                <div
+                                    id="
+                                        stopwatch_display_${id}
+                                    "
+                                    class="
+                                        stopwatch-display
+                                    "
+                                >
+                                    ${timerDisplay}
+                                </div>
+
+
+                                <div
+                                    class="
+                                        stopwatch-buttons
+                                    "
+                                >
+
+                                    <button
+                                        class="
+                                            stopwatch-pause
+                                        "
+                                        onclick="
+                                            stopperSzünet(
+                                                '${id}'
+                                            )
+                                        "
+                                    >
+                                        ⏸️ Szünet
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            stopwatch-finish
+                                        "
+                                        onclick="
+                                            stopperBefejez(
+                                                '${id}'
+                                            )
+                                        "
+                                    >
+                                        ⏹️ Befejezés
+                                    </button>
+
+                                </div>
+
+
+                                <p
+                                    class="
+                                        stopwatch-hint
+                                    "
+                                >
+                                    A stopper fut.
+                                    A telefon lezárása
+                                    sem állítja meg.
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    } else {
+
+                        stopperHtml = `
+
+                            <div
+                                class="stopwatch"
+                            >
+
+                                <div
+                                    id="
+                                        stopwatch_display_${id}
+                                    "
+                                    class="
+                                        stopwatch-display
+                                    "
+                                >
+                                    ${timerDisplay}
+                                </div>
+
+
+                                <div
+                                    class="
+                                        stopwatch-buttons
+                                    "
+                                >
+
+                                    <button
+                                        class="
+                                            stopwatch-start
+                                        "
+                                        onclick="
+                                            stopperIndit(
+                                                '${id}'
+                                            )
+                                        "
+                                    >
+                                        ▶️ Indítás
+                                    </button>
+
+
+                                    ${
+                                        timerElapsed > 0
+                                            ? `
+
+                                                <button
+                                                    class="
+                                                        stopwatch-finish
+                                                    "
+                                                    onclick="
+                                                        stopperBefejez(
+                                                            '${id}'
+                                                        )
+                                                    "
+                                                >
+                                                    ⏹️ Befejezés
+                                                </button>
+
+
+                                                <button
+                                                    class="
+                                                        stopwatch-reset
+                                                    "
+                                                    onclick="
+                                                        stopperNullaz(
+                                                            '${id}'
+                                                        )
+                                                    "
+                                                >
+                                                    ↺ Nullázás
+                                                </button>
+
+                                            `
+                                            : ''
+                                    }
+
+                                </div>
+
+
+                                ${
+                                    timerElapsed > 0
+
+                                        ? `
+
+                                            <p
+                                                class="
+                                                    stopwatch-hint
+                                                "
+                                            >
+                                                Szüneteltetett idő:
+                                                ez még nincs
+                                                hozzáadva
+                                                a napi eredményhez.
+                                            </p>
+
+                                        `
+
+                                        : `
+
+                                            <p
+                                                class="
+                                                    stopwatch-hint
+                                                "
+                                            >
+                                                A Befejezés gomb
+                                                hozzáadja az időt
+                                                a mai eredményhez.
+                                            </p>
+
+                                        `
+                                }
+
+                            </div>
+
+                        `;
+
+                    }
+
+                }
+
+
+                /* ------------------------------------------------
+                   ELŐZŐ MŰVELET
+                   ------------------------------------------------ */
+
+                const undoDisabled =
+                    !utolsoMuvelet ||
+                    utolsoMuvelet.id !== id ||
+                    utolsoMuvelet.date !== today;
+
+
+                return `
+
+                    <div class="card">
+
                         <div
-                            class="progress-bar"
-                            style="width:${szazalek}%"
-                        ></div>
-                    </div>
+                            class="card-header"
+                        >
 
-                    <div class="progress-text">
-                        ${szazalek}% · Cél: ${celKijelzes}
-                    </div>
+                            <h2
+                                class="card-title"
+                            >
+                                ${g.name}
+                            </h2>
 
-                    <div class="val-display">
-                        ${maiKijelzes}
-                    </div>
 
-                    <div class="btn-group">
-                        ${gombokHtml}
-                    </div>
+                            <div
+                                class="target-box"
+                            >
 
-                    ${egyediBoxHtml}
+                                🎯
 
-                    <button
-                        class="undo-btn"
-                        onclick="visszavon()"
-                        ${utolsoMuvelet && utolsoMuvelet.id === id ? '' : 'disabled'}
-                    >
-                        ↩️ Utolsó hozzáadás visszavonása
-                    </button>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value="${goal}"
+                                    onchange="
+                                        mentiCelt(
+                                            '${id}',
+                                            this
+                                        )
+                                    "
+                                >
 
-                    <button
-                        class="history-btn"
-                        onclick="toggleReszletek('${id}')"
-                    >
-                        📋 Elmúlt napok
-                    </button>
+                                ${g.type === 'sec'
+                                    ? 'mp'
+                                    : 'db'
+                                }
 
-                    <div
-                        id="history_box_${id}"
-                        class="history-box"
-                    >
-                        ${histHtml}
-                    </div>
+                            </div>
 
-                    <div class="stats-grid">
-
-                        <div class="stat">
-                            <span class="stat-value">
-                                ${formatValue(
-                                    g,
-                                    calculateWeeklyTotal(data,id)
-                                )}
-                            </span>
-
-                            <span class="stat-label">
-                                7 nap összesen
-                            </span>
                         </div>
 
-                        <div class="stat">
-                            <span class="stat-value">
-                                ${formatValue(
-                                    g,
-                                    calculateRecord(data,id)
-                                )}
-                            </span>
 
-                            <span class="stat-label">
-                                Rekord
-                            </span>
+                        <div
+                            class="val-display"
+                            style="
+                                color:${g.color};
+                            "
+                        >
+                            ${formatValue(
+                                value,
+                                g.type
+                            )}
                         </div>
 
-                        <div class="stat">
-                            <span class="stat-value">
-                                ${formatValue(
-                                    g,
-                                    calculateAverage(data,id)
-                                )}
-                            </span>
 
-                            <span class="stat-label">
-                                Napi átlag
-                            </span>
+                        <div
+                            class="
+                                progress-wrapper
+                            "
+                        >
+
+                            <div
+                                class="
+                                    progress-bar
+                                "
+                                style="
+                                    width:${percent}%;
+                                    background:${g.color};
+                                "
+                            ></div>
+
                         </div>
 
-                        <div class="stat">
-                            <span class="stat-value">
-                                ${Object.keys(history).length}
-                            </span>
 
-                            <span class="stat-label">
-                                Aktív napok
-                            </span>
+                        <div
+                            class="
+                                progress-text
+                            "
+                        >
+
+                            ${Math.round(percent)}%
+
+                            ·
+
+                            cél:
+                            ${formatGoal(
+                                goal,
+                                g.type
+                            )}
+
+                        </div>
+
+
+                        ${buttonsHtml}
+
+
+                        ${egyediBoxHtml}
+
+
+                        ${stopperHtml}
+
+
+                        <button
+                            class="undo-btn"
+                            onclick="
+                                visszavon()
+                            "
+                            ${undoDisabled
+                                ? 'disabled'
+                                : ''
+                            }
+                        >
+                            ↩️ Utolsó hozzáadás
+                            visszavonása
+                        </button>
+
+
+                        <button
+                            class="history-btn"
+                            onclick="
+                                toggleReszletek(
+                                    '${id}'
+                                )
+                            "
+                        >
+                            📜 Előzmények
+                        </button>
+
+
+                        <div
+                            id="
+                                history_${id}
+                            "
+                            class="
+                                history-box
+                            "
+                        >
+
+                            ${recentHtml}
+
+
+                            <div
+                                class="
+                                    stats-grid
+                                "
+                            >
+
+                                <div class="stat">
+
+                                    <span
+                                        class="
+                                            stat-value
+                                        "
+                                    >
+                                        ${formatValue(
+                                            calculateWeeklyTotal(
+                                                data,
+                                                id
+                                            ),
+                                            g.type
+                                        )}
+                                    </span>
+
+                                    <span
+                                        class="
+                                            stat-label
+                                        "
+                                    >
+                                        elmúlt 7 nap
+                                    </span>
+
+                                </div>
+
+
+                                <div class="stat">
+
+                                    <span
+                                        class="
+                                            stat-value
+                                        "
+                                    >
+                                        ${formatValue(
+                                            calculateRecord(
+                                                data,
+                                                id
+                                            ),
+                                            g.type
+                                        )}
+                                    </span>
+
+                                    <span
+                                        class="
+                                            stat-label
+                                        "
+                                    >
+                                        rekord
+                                    </span>
+
+                                </div>
+
+
+                                <div class="stat">
+
+                                    <span
+                                        class="
+                                            stat-value
+                                        "
+                                    >
+                                        ${formatValue(
+                                            Math.round(
+                                                calculateAverage(
+                                                    data,
+                                                    id
+                                                )
+                                            ),
+                                            g.type
+                                        )}
+                                    </span>
+
+                                    <span
+                                        class="
+                                            stat-label
+                                        "
+                                    >
+                                        átlagos nap
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                class="history-btn"
+                                onclick="
+                                    nyitTeljesElozmeny()
+                                "
+                            >
+                                📊 Teljes előzmények
+                            </button>
+
                         </div>
 
                     </div>
 
-                    <button
-                        class="history-btn"
-                        onclick="nyitTeljesElozmeny('${id}')"
-                    >
-                        📅 Összes előzmény
-                    </button>
+                `;
 
-                </div>
-            `;
-        });
+            }).join('');
 
-        container.innerHTML = html;
 
         initPicker();
+
+
+        if (
+            vanFutoStopper(data)
+        ) {
+
+            startStopperFrissites();
+
+        }
+
     }
 
 
     /* ============================================================
-       ENTER BILLENTYŰ
+       ENTER KEZELÉS
        ============================================================ */
 
-    function handleEnter(event, id, type) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
+    function handleEnter(
+        event,
+        id
+    ) {
 
-            egyediHozzaad(id, type);
+        if (
+            event.key === 'Enter'
+        ) {
+
+            egyediHozzaad(id);
+
         }
+
     }
 
 
@@ -1808,114 +4372,173 @@
        ELŐZMÉNYEK
        ============================================================ */
 
-    function nyitTeljesElozmeny(id) {
-        const g = gyakorlatokDef.find(
-            x => x.id === id
-        );
+    function toggleReszletek(id) {
 
-        if (!g) return;
+        const element =
+            document.getElementById(
+                'history_' + id
+            );
 
-        const data = loadData();
 
-        const history = getHistory(
-            data,
-            id
-        );
-
-        const sortedDates = Object.keys(history)
-            .sort()
-            .reverse();
-
-        document.getElementById(
-            'full-history-title'
-        ).innerText =
-            `${g.name} - Összes előzmény`;
-
-        let html = '';
-
-        if (sortedDates.length === 0) {
-
-            html = `
-                <div class="empty">
-                    Még nincs rögzített adat.
-                </div>
-            `;
-
-        } else {
-
-            sortedDates.forEach(date => {
-
-                const value = history[date];
-
-                const goal = getGoal(
-                    data,
-                    id,
-                    date
-                );
-
-                const percent = goal > 0
-                    ? Math.min(
-                        Math.round(
-                            (value / goal) * 100
-                        ),
-                        100
-                    )
-                    : 0;
-
-                html += `
-                    <div
-                        class="history-row"
-                        style="display:block;"
-                    >
-
-                        <div style="
-                            display:flex;
-                            justify-content:space-between;
-                            gap:10px;
-                        ">
-
-                            <span>
-                                <b>${formatDate(date)}</b>
-                            </span>
-
-                            <span>
-                                <b>
-                                    ${formatValue(g,value)}
-                                </b>
-                            </span>
-
-                        </div>
-
-                        <div style="
-                            color:var(--muted);
-                            font-size:0.75rem;
-                            margin-top:4px;
-                        ">
-                            Cél: ${formatGoal(g,goal)}
-                            · ${percent}%
-                        </div>
-
-                    </div>
-                `;
-            });
+        if (!element) {
+            return;
         }
 
-        document.getElementById(
-            'full-history-list'
-        ).innerHTML = html;
 
-        valtView('history');
+        element.classList.toggle(
+            'active'
+        );
     }
 
 
-    function toggleReszletek(id) {
-        const box = document.getElementById(
-            'history_box_' + id
-        );
+    function nyitTeljesElozmeny() {
 
-        if (box) {
-            box.classList.toggle('active');
+        valtView('history');
+
+        renderFullHistory();
+    }
+
+
+    function renderFullHistory() {
+
+        const data =
+            loadData();
+
+        const container =
+            document.getElementById(
+                'full-history'
+            );
+
+
+        const allDates =
+            new Set();
+
+
+        gyakorlatokDef.forEach(g => {
+
+            const history =
+                getHistory(
+                    data,
+                    g.id
+                );
+
+
+            Object.keys(history)
+                .forEach(
+                    date =>
+                        allDates.add(date)
+                );
+
+        });
+
+
+        const dates =
+            Array.from(
+                allDates
+            )
+            .sort()
+            .reverse();
+
+
+        if (
+            dates.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+                    Még nincs rögzített adat.
+                </div>
+
+            `;
+
+            return;
         }
+
+
+        container.innerHTML =
+            dates.map(date => {
+
+                const rows =
+                    gyakorlatokDef
+                        .filter(
+                            g =>
+                                data.activeExercises[g.id] !== false
+                        )
+                        .map(g => {
+
+                            const value =
+                                getHistory(
+                                    data,
+                                    g.id
+                                )[date] || 0;
+
+
+                            if (
+                                Number(value) <= 0
+                            ) {
+
+                                return '';
+
+                            }
+
+
+                            return `
+
+                                <div
+                                    class="
+                                        history-row
+                                    "
+                                >
+
+                                    <span>
+                                        ${g.name}
+                                    </span>
+
+                                    <strong>
+                                        ${formatValue(
+                                            value,
+                                            g.type
+                                        )}
+                                    </strong>
+
+                                </div>
+
+                            `;
+
+                        })
+                        .join('');
+
+
+                if (!rows) {
+                    return '';
+                }
+
+
+                return `
+
+                    <div
+                        class="card"
+                        style="
+                            margin-bottom:10px;
+                        "
+                    >
+
+                        <h3
+                            style="
+                                margin-top:0;
+                            "
+                        >
+                            ${formatDate(date)}
+                        </h3>
+
+                        ${rows}
+
+                    </div>
+
+                `;
+
+            }).join('');
     }
 
 
@@ -1923,29 +4546,43 @@
        NÉZETVÁLTÁS
        ============================================================ */
 
-    function valtView(viewName) {
+    function valtView(view) {
 
-        document.querySelectorAll(
-            '.view-section'
-        ).forEach(el => {
-            el.classList.remove('active');
-        });
-
-        if (viewName === 'main') {
-
+        const main =
             document.getElementById(
                 'main-view'
-            ).classList.add('active');
+            );
 
-            initPicker();
-            renderApp();
-
-        } else if (viewName === 'history') {
-
+        const history =
             document.getElementById(
                 'history-view'
-            ).classList.add('active');
+            );
+
+
+        if (
+            view === 'history'
+        ) {
+
+            main.classList.remove(
+                'active'
+            );
+
+            history.classList.add(
+                'active'
+            );
+
+        } else {
+
+            history.classList.remove(
+                'active'
+            );
+
+            main.classList.add(
+                'active'
+            );
+
         }
+
     }
 
 
@@ -1954,15 +4591,28 @@
        ============================================================ */
 
     function toggleSettings() {
-        const card = document.getElementById(
-            'settings-card'
-        );
 
-        if (card.style.display === 'none') {
-            card.style.display = 'block';
+        const section =
+            document.getElementById(
+                'settings-section'
+            );
+
+
+        if (
+            section.style.display ===
+            'none'
+        ) {
+
+            section.style.display =
+                'block';
+
         } else {
-            card.style.display = 'none';
+
+            section.style.display =
+                'none';
+
         }
+
     }
 
 
@@ -1971,42 +4621,59 @@
        ============================================================ */
 
     function exportData() {
-        const data = loadData();
 
-        const exportObject = {
-            app: 'Szamlalo',
-            version: STORAGE_VERSION,
-            exportedAt: new Date().toISOString(),
-            data: data
-        };
+        const data =
+            loadData();
 
-        const blob = new Blob(
-            [
-                JSON.stringify(
-                    exportObject,
-                    null,
-                    2
-                )
-            ],
-            {
-                type: 'application/json'
-            }
-        );
 
-        const url = URL.createObjectURL(blob);
+        const blob =
+            new Blob(
+                [
+                    JSON.stringify(
+                        data,
+                        null,
+                        2
+                    )
+                ],
+                {
+                    type:
+                        'application/json'
+                }
+            );
 
-        const a = document.createElement('a');
 
-        const today = getTodayString();
+        const url =
+            URL.createObjectURL(
+                blob
+            );
 
-        a.href = url;
-        a.download = `szamlalo-mentes-${today}.json`;
+
+        const a =
+            document.createElement(
+                'a'
+            );
+
+
+        a.href =
+            url;
+
+        a.download =
+            'edzesnaplo-mentes-' +
+            getTodayString() +
+            '.json';
+
 
         document.body.appendChild(a);
+
         a.click();
+
         a.remove();
 
-        URL.revokeObjectURL(url);
+
+        URL.revokeObjectURL(
+            url
+        );
+
     }
 
 
@@ -2015,79 +4682,88 @@
        ============================================================ */
 
     function triggerImport() {
-        document.getElementById(
-            'import-file'
-        ).click();
+
+        const input =
+            document.getElementById(
+                'import-file'
+            );
+
+
+        input.value =
+            '';
+
+        input.click();
     }
 
 
     function importData(event) {
-        const file = event.target.files[0];
+
+        const file =
+            event.target.files[0];
+
 
         if (!file) {
             return;
         }
 
-        const reader = new FileReader();
 
-        reader.onload = function(e) {
+        const reader =
+            new FileReader();
 
-            try {
 
-                const parsed = JSON.parse(
-                    e.target.result
-                );
+        reader.onload =
+            function() {
 
-                const importedData =
-                    parsed.data || parsed;
+                try {
 
-                if (
-                    !importedData ||
-                    typeof importedData !== 'object'
-                ) {
-                    throw new Error(
-                        'Érvénytelen adatfájl.'
+                    const parsed =
+                        JSON.parse(
+                            reader.result
+                        );
+
+
+                    const data =
+                        normalizeData(
+                            parsed
+                        );
+
+
+                    saveData(data);
+
+
+                    utolsoMuvelet =
+                        null;
+
+
+                    alert(
+                        'Az adatok sikeresen be lettek töltve.'
                     );
+
+
+                    initPicker();
+
+                    renderApp();
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    alert(
+                        'Az importált fájl nem érvényes.'
+                    );
+
                 }
 
-                const normalized =
-                    normalizeData(importedData);
+            };
 
-                const confirmed = confirm(
-                    'Biztosan visszaállítod ezt a mentést?\n\n' +
-                    'A jelenlegi adatok helyére a mentés adatai kerülnek.'
-                );
 
-                if (!confirmed) {
-                    return;
-                }
-
-                saveData(normalized);
-
-                utolsoMuvelet = null;
-
-                alert(
-                    'Az adatok sikeresen vissza lettek állítva.'
-                );
-
-                renderApp();
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert(
-                    'Nem sikerült beolvasni a mentést. ' +
-                    'Ellenőrizd, hogy valóban Szamlalo JSON-fájlt választottál-e.'
-                );
-
-            } finally {
-
-                event.target.value = '';
-            }
-        };
-
-        reader.readAsText(file);
+        reader.readAsText(
+            file
+        );
     }
 
 
@@ -2097,72 +4773,100 @@
 
     function resetToday() {
 
-        const confirmed = confirm(
-            'Biztosan törlöd a mai nap összes rögzített értékét?\n\n' +
-            'A korábbi napok adatai megmaradnak.'
-        );
+        const confirmed =
+            confirm(
+                'Biztosan törölni szeretnéd a mai nap eredményeit és a mai stopperidőket?'
+            );
+
 
         if (!confirmed) {
             return;
         }
 
-        const data = loadData();
 
-        const today = getTodayString();
+        const data =
+            loadData();
+
+        const today =
+            getTodayString();
+
 
         gyakorlatokDef.forEach(g => {
 
-            const history = getHistory(
-                data,
-                g.id
-            );
+            const history =
+                getHistory(
+                    data,
+                    g.id
+                );
+
 
             delete history[today];
 
+
             /*
-             * A mai napi cél megmarad.
+             * A mai nap nullázásakor a
+             * stoppert is nullázzuk.
              */
+
+            data.timers[g.id] = {
+
+                elapsed:
+                    0,
+
+                startedAt:
+                    0,
+
+                running:
+                    false
+
+            };
+
         });
+
 
         saveData(data);
 
-        utolsoMuvelet = null;
+
+        utolsoMuvelet =
+            null;
+
+
+        stopStopperFrissites();
 
         renderApp();
+
     }
 
 
     /* ============================================================
-       TELJES ADAT TÖRLÉSE
+       MINDEN ADAT TÖRLÉSE
        ============================================================ */
 
     function resetAllData() {
 
-        const confirmed = confirm(
-            'FIGYELEM!\n\n' +
-            'Ez törli az összes edzésadatot, célt és beállítást.\n\n' +
-            'A művelet csak exportált mentésből állítható vissza.\n\n' +
-            'Biztosan folytatod?'
-        );
+        const confirmed =
+            confirm(
+                'FIGYELEM!\n\n' +
+                'Ez minden eddigi edzésadatot, célt és stoppert töröl.\n\n' +
+                'Biztosan folytatod?'
+            );
+
 
         if (!confirmed) {
             return;
         }
 
-        const secondConfirm = confirm(
-            'Utolsó megerősítés:\n\n' +
-            'MINDEN adat törlődni fog.'
+
+        localStorage.removeItem(
+            STORAGE_KEY
         );
 
-        if (!secondConfirm) {
-            return;
-        }
-
-        localStorage.removeItem(STORAGE_KEY);
 
         /*
-         * A régi verzió maradék adatait is töröljük.
+         * Régi formátumú adatok
+         * eltávolítása is.
          */
+
         gyakorlatokDef.forEach(g => {
 
             localStorage.removeItem(
@@ -2172,45 +4876,158 @@
             localStorage.removeItem(
                 'cel_' + g.id
             );
+
         });
 
-        /*
-         * active_ex_* régi kulcsok törlése.
-         */
-        Object.keys(localStorage).forEach(key => {
 
-            if (
-                key.startsWith('active_ex_') ||
-                key.startsWith('cel_') ||
-                key.startsWith('history_')
-            ) {
-                localStorage.removeItem(key);
-            }
-        });
+        for (
+            let i = 0;
+            i < 365;
+            i++
+        ) {
 
-        utolsoMuvelet = null;
+            const date =
+                new Date();
 
-        alert('Minden adat törölve.');
+            date.setDate(
+                date.getDate() - i
+            );
 
-        location.reload();
+
+            const dateString =
+                dateToString(date);
+
+
+            localStorage.removeItem(
+                'active_ex_' +
+                dateString
+            );
+
+
+            gyakorlatokDef.forEach(g => {
+
+                localStorage.removeItem(
+                    'cel_' +
+                    g.id +
+                    '_' +
+                    dateString
+                );
+
+            });
+
+        }
+
+
+        utolsoMuvelet =
+            null;
+
+
+        stopStopperFrissites();
+
+
+        const data =
+            createEmptyData();
+
+
+        saveData(data);
+
+
+        initPicker();
+
+        renderApp();
+
     }
 
 
     /* ============================================================
-       POPUP
+       GRATULÁCIÓ
        ============================================================ */
 
     function mutatPopup() {
-        document.getElementById(
-            'congrats-popup'
-        ).style.display = 'flex';
+
+        const popup =
+            document.getElementById(
+                'congrats-popup'
+            );
+
+
+        popup.style.display =
+            'flex';
     }
 
 
-    function bezárPopup() {
-        document.getElementById(
-            'congrats-popup'
-        ).style.display = 'none';
+    function bezarPopup() {
+
+        const popup =
+            document.getElementById(
+                'congrats-popup'
+            );
+
+
+        popup.style.display =
+            'none';
+    }
+
+
+    /* ============================================================
+       ÉJFÉLI NAPVÁLTÁS
+       ============================================================ */
+
+    setInterval(
+        () => {
+
+            const aktualisNap =
+                getTodayString();
+
+
+            if (
+                aktualisNap !==
+                utolsoIsmertNap
+            ) {
+
+                utolsoIsmertNap =
+                    aktualisNap;
+
+
+                utolsoMuvelet =
+                    null;
+
+
+                renderApp();
+
+            }
+
+        },
+        30000
+    );
+
+
+    /* ============================================================
+       INDÍTÁS
+       ============================================================ */
+
+    const indulasiAdat =
+        loadData();
+
+
+    initPicker();
+
+    renderApp();
+
+
+    /*
+     * Ha az oldal újratöltésekor már futott stopper,
+     * azonnal folytatjuk a kijelző frissítését.
+     */
+
+    if (
+        vanFutoStopper(
+            indulasiAdat
+        )
+    ) {
+
+        startStopperFrissites();
+
     }
 
 
@@ -2218,61 +5035,30 @@
        SERVICE WORKER
        ============================================================ */
 
-    if ('serviceWorker' in navigator) {
+    if (
+        'serviceWorker' in navigator
+    ) {
 
         window.addEventListener(
             'load',
             () => {
 
                 navigator.serviceWorker
-                    .register('./sw.js')
-                    .then(() => {
-                        console.log(
-                            'Service Worker regisztrálva.'
-                        );
-                    })
-                    .catch(error => {
-                        console.warn(
-                            'Service Worker hiba:',
-                            error
-                        );
-                    });
+                    .register(
+                        'sw.js'
+                    )
+                    .catch(
+                        error =>
+                            console.warn(
+                                'Service Worker hiba:',
+                                error
+                            )
+                    );
 
             }
         );
+
     }
-
-
-    /* ============================================================
-       AUTOMATIKUS NAPVÁLTÁS
-       ============================================================ */
-
-    let utolsoIsmertNap = getTodayString();
-
-    setInterval(() => {
-
-        const aktualisNap = getTodayString();
-
-        if (
-            aktualisNap !== utolsoIsmertNap
-        ) {
-            utolsoIsmertNap = aktualisNap;
-
-            utolsoMuvelet = null;
-
-            renderApp();
-        }
-
-    }, 30000);
-
-
-    /* ============================================================
-       INDÍTÁS
-       ============================================================ */
-
-    loadData();
-    initPicker();
-    renderApp();
 
 </script>
 
