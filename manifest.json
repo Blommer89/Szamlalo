@@ -1,8 +1,11 @@
 {
   "name": "Napi Edzés Napló",
   "short_name": "EdzésNapló",
+  "description": "Egyszerű napi edzés- és ismétlésszámláló",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f8fafc",
   "theme_color": "#2563eb",
   "icons": [
