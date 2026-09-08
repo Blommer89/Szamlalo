@@ -3367,6 +3367,15 @@
         data
     ) {
 
+        const active =
+            getActiveExercises(data);
+
+        // Ha nincs kiválasztott gyakorlat,
+        // nincs értelmezhető sorozat sem.
+        if (active.length === 0) {
+            return 0;
+        }
+
         let streak =
             0;
 
@@ -3385,7 +3394,7 @@
             let complete = true;
 
 
-            getActiveExercises(data)
+            active
                 .forEach(g => {
 
                     const value =
@@ -3892,9 +3901,7 @@
                             >
 
                                 <div
-                                    id="
-                                        stopwatch_display_${id}
-                                    "
+                                    id="stopwatch_display_${id}"
                                     class="
                                         stopwatch-display
                                     "
